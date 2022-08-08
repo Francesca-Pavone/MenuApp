@@ -1,4 +1,4 @@
-package com.francescapavone.menuapp.ui.model
+package com.francescapavone.menuapp.ui.data
 
 data class Restaurant(
     val id: Int,

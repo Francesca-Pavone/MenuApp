@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.francescapavone.menuapp.R
 import com.francescapavone.menuapp.ui.components.QuantityCounter
-import com.francescapavone.menuapp.ui.model.DataProvider
-import com.francescapavone.menuapp.ui.model.Restaurant
+import com.francescapavone.menuapp.ui.data.DataProvider
+import com.francescapavone.menuapp.ui.data.Restaurant
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter

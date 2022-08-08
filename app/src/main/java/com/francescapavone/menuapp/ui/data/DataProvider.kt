@@ -1,4 +1,4 @@
-package com.francescapavone.menuapp.ui.model
+package com.francescapavone.menuapp.ui.data
 
 import com.francescapavone.menuapp.R
 
