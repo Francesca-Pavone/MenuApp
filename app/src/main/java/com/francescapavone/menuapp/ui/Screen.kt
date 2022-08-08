@@ -2,15 +2,14 @@ package com.francescapavone.menuapp.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,6 +24,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.francescapavone.menuapp.R
+import com.francescapavone.menuapp.ui.components.QuantityCounter
+import com.francescapavone.menuapp.ui.model.DataProvider
+import com.francescapavone.menuapp.ui.model.Restaurant
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
@@ -33,6 +35,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomePage(){
     val restaurantName = rememberSaveable() { mutableStateOf("") }
+
+    val restaurants = remember { DataProvider.restaurantList }
+
+
     Image(
         modifier = Modifier.fillMaxSize(),
         painter = painterResource(id = R.drawable.bg_app),
@@ -58,18 +64,32 @@ fun HomePage(){
         //bottomBar = { BottomBar() },
         topBar = { TopBar(restaurantName) },
     ) {paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
-            Spacer(modifier = Modifier.height(10.dp))
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
-                modifier = Modifier.padding(start = 20.dp),
                 text = "Recommended",
+                modifier = Modifier.padding(top = 20.dp, bottom = 20.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                style = TextStyle(
-                    color = Color.Black
-                )
+                color = Color.Black
             )
-            RestaurantCard()
+
+            LazyRow(
+            contentPadding = PaddingValues(start = 110.dp)
+            ) {
+                items(
+                    items = restaurants,
+                    itemContent = {
+                        RestaurantCard(restaurant = it)
+                    }
+                )
+            }
+
+            //RestaurantCard()
             /*Text(
                 modifier = Modifier.padding(start = 20.dp),
                 text = "Your favourites",
@@ -88,7 +108,6 @@ fun HomePage(){
 @Composable
 fun TopBar(restaurant: MutableState<String>) {
     Box(modifier = Modifier
-        .fillMaxWidth()
         .height(110.dp)){
         Image(
             modifier = Modifier
@@ -101,6 +120,7 @@ fun TopBar(restaurant: MutableState<String>) {
             Modifier
                 .padding(20.dp, 10.dp, 20.dp, 20.dp)
                 .wrapContentHeight()
+                .align(Alignment.TopCenter)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
@@ -121,20 +141,16 @@ fun TopBar(restaurant: MutableState<String>) {
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .weight(1f)
+                    .padding(end = 18.dp)
             )
-            Spacer(modifier = Modifier.width(18.dp))
             IconButton(onClick = { }) {
                 Image(painter = painterResource(id = R.drawable.qr_code), contentDescription = "qrCodeScanner")
             }
-            /*Spacer(modifier = Modifier.width(12.dp))
-            IconButton(onClick = {}) {
-                Image(painter = painterResource(id = R.drawable.shop_bag), contentDescription = "shoppingCart")
-            }*/
         }
     }
 }
 
-@Composable
+/*@Composable
 fun BottomBar(){
     BottomAppBar(
         elevation = AppBarDefaults.BottomAppBarElevation,
@@ -144,7 +160,7 @@ fun BottomBar(){
         contentPadding = AppBarDefaults.ContentPadding
     ) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-            IconButton(onClick = { /* doSomething() */ }) {
+            IconButton(onClick = { *//* doSomething() *//* }) {
                 Icon(
                     Icons.Rounded.Home,
                     contentDescription = "Localized description",
@@ -153,7 +169,7 @@ fun BottomBar(){
             }
         }
         Spacer(Modifier.weight(1f, true))
-        IconButton(onClick = { /* doSomething() */ }) {
+        IconButton(onClick = { *//* doSomething() *//* }) {
             Icon(
                 Icons.Rounded.Search,
                 contentDescription = "Localized description",
@@ -161,138 +177,126 @@ fun BottomBar(){
             )
         }
     }
-}
+}*/
 
 @Composable
-fun RestaurantCard(){
+fun RestaurantCard(restaurant: Restaurant) {
     Card(
+        modifier = Modifier
+            .padding(end = 20.dp)
+            .width(180.dp),
         shape = RoundedCornerShape(14.dp),
         backgroundColor = Color.White,
-        modifier = Modifier
-            .padding(20.dp)
-            .width(180.dp)
-            .height(290.dp),
         elevation = 5.dp
     ) {
-        Scaffold(
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { ScreenRouter.navigateTo(2) },
-                    modifier = Modifier.size(40.dp),
-                    backgroundColor = myYellow,
-                    contentColor = myGreen,
-                    shape = CircleShape,
-                    elevation = FloatingActionButtonDefaults.elevation(3.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.eye2),
-                        tint = myGreen,
-                        contentDescription = "eye",
-                        modifier = Modifier.padding(6.dp)
-                    )
-                }
-            },
-            floatingActionButtonPosition = FabPosition.End){
-
-        }
-
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
+                .padding(10.dp)
         ) {
             Image(
                 alignment = Alignment.Center,
-                painter = painterResource(id = R.drawable.cracco),
+                painter = painterResource(id = restaurant.image),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(5.dp)
                     .clip(RoundedCornerShape(25.dp)),
             )
-            Column(modifier = Modifier
-                .weight(1f)
-                .padding(top = 10.dp)) {
+            Column(
+                modifier = Modifier
+//                    .weight(1f)
+                    .padding(top = 10.dp)
+            ) {
                 Text(
-                    text = "Cracco",
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    text = restaurant.name,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Largo Achille Albacini, 8",
-                    style = TextStyle(
-                        color = Color.Gray,
-                        fontSize = 12.sp
-                    )
+                    text = restaurant.address,
+                    color = Color.Gray,
+                    fontSize = 14.sp
                 )
                 Text(
-                    text = "Portofino",
-                    style = TextStyle(
-                        color = Color.Gray,
-                        fontSize = 12.sp
-                    )
+                    text = restaurant.city,
+                    color = Color.Gray,
+                    fontSize = 14.sp
+                )
+            }
+            FloatingActionButton(
+                onClick = { ScreenRouter.navigateTo(2) },
+                modifier = Modifier
+                    .size(40.dp)
+                    .align(Alignment.End),
+                backgroundColor = myYellow,
+                contentColor = myGreen,
+                shape = CircleShape,
+                elevation = FloatingActionButtonDefaults.elevation(3.dp),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.eye2),
+                    tint = myGreen,
+                    contentDescription = "eye",
+                    modifier = Modifier.padding(6.dp)
                 )
             }
         }
     }
 }
 
-@Composable
-fun DishCard(){
-    Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.padding(start = 20.dp)){
-        Box(modifier = Modifier
-            .height(230.dp)
-            .padding(top = 30.dp),
-            contentAlignment = Alignment.TopCenter
-        ){
-            Card(
-                shape = RoundedCornerShape(14.dp),
-                modifier = Modifier
-                    .padding(10.dp)
-                    .width(180.dp),
-                elevation = 5.dp
-            ) {
-                Scaffold(bottomBar = {
-                    Row(modifier = Modifier.padding(20.dp)) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Sashimi",
-                            style = TextStyle(
-                                color = Color.Black,
-                                fontSize = 16.sp
-                            )
-                        )
-                        Text(
-                            text = "€8.50",
-                            style = TextStyle(
-                                color = myYellow,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
-                    IconButton(
-                        onClick = { },
-                        modifier = Modifier
-                            .background(color = myYellow, shape = RoundedCornerShape(10.dp)
-                            )
-                    ) {
-                        Icon(Icons.Default.Add, tint = myGreen,  contentDescription = null)
-                    }
-                }
-                }) {
 
-                }
+@Composable
+fun DishCard() {
+    val (count, updateCount) = remember { mutableStateOf(0) }
+    Box(
+        contentAlignment = Alignment.TopCenter,
+        modifier = Modifier.padding(start = 20.dp)
+    ) {
+        Card(
+            modifier = Modifier
+                .padding(top = 30.dp)
+                .width(180.dp),
+            shape = RoundedCornerShape(14.dp),
+            elevation = 5.dp
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Bottom,
+                modifier = Modifier
+                    .padding(top = 100.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
+            ) {
+                Text(
+                    text = "Sashimi",
+                    color = Color.Black,
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = "€8.50",
+                    color = myYellow,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                QuantityCounter(
+                    modifier = Modifier.align(Alignment.End),
+                    count = count,
+                    remove = { if (count > 0) updateCount(count - 1) },
+                    add = { updateCount(count + 1) }
+                )
+                /*IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .background(color = myYellow, shape = RoundedCornerShape(10.dp)
+                    )
+            ) {
+                Icon(Icons.Default.Add, tint = myGreen,  contentDescription = null)
+            }*/
             }
+
         }
         Image(
             alignment = Alignment.Center,
             painter = painterResource(id = R.drawable.sashimi),
             contentDescription = null,
             modifier = Modifier
-                .padding(5.dp)
                 .clip(CircleShape)
                 .size(130.dp)
         )
@@ -366,7 +370,7 @@ fun Menu(){
         Image(
             modifier = Modifier
                 .offset((-65).dp, 0.dp)
-                .clickable ( onClick = { scope.launch { if(scaffoldState.drawerState.isClosed) scaffoldState.drawerState.open() else scaffoldState.drawerState.close() }})
+                .clickable(onClick = { scope.launch { if (scaffoldState.drawerState.isClosed) scaffoldState.drawerState.open() else scaffoldState.drawerState.close() } })
             ,
             painter = painterResource(id = R.drawable.side_menu),
             contentDescription = "",
@@ -378,9 +382,7 @@ fun Menu(){
                 text = "Secondi",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                style = TextStyle(
-                    color = Color.Black
-                )
+                color = Color.Black
             )
             DishCard()
         }
