@@ -3,11 +3,14 @@ package com.francescapavone.menuapp.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
@@ -21,10 +24,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.francescapavone.menuapp.R
+import com.francescapavone.menuapp.ui.components.DishCard
 import com.francescapavone.menuapp.ui.components.QuantityCounter
+import com.francescapavone.menuapp.ui.components.RestaurantCard
 import com.francescapavone.menuapp.ui.data.DataProvider
 import com.francescapavone.menuapp.ui.data.Restaurant
 import com.francescapavone.menuapp.ui.theme.myGreen
@@ -34,9 +41,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun HomePage(){
-    val restaurantName = rememberSaveable() { mutableStateOf("") }
+    val restaurantName = rememberSaveable { mutableStateOf("") }
 
-    val restaurants = remember { DataProvider.restaurantList }
+    val restaurants = rememberSaveable { DataProvider.restaurantList }
 
 
     Image(
@@ -99,7 +106,7 @@ fun HomePage(){
                     color = Color.Black
                 )
             )
-            DishCard()*/
+            */
         }
     }
 }
@@ -129,8 +136,9 @@ fun TopBar(restaurant: MutableState<String>) {
                 value = restaurant.value,
                 onValueChange = {restaurant.value = it},
                 placeholder = { Text(text = "Search a restaurant", fontSize = 16.sp) },
-                textStyle = TextStyle(fontSize = 16.sp),
-                singleLine = true,
+                textStyle = TextStyle(lineHeight = 70.sp),
+                maxLines = 1,
+                //singleLine = true,
                 leadingIcon = { Icon(imageVector = Icons.Rounded.Search, contentDescription = "Search") },
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White,
@@ -179,134 +187,14 @@ fun BottomBar(){
     }
 }*/
 
-@Composable
-fun RestaurantCard(restaurant: Restaurant) {
-    Card(
-        modifier = Modifier
-            .padding(end = 20.dp)
-            .width(180.dp),
-        shape = RoundedCornerShape(14.dp),
-        backgroundColor = Color.White,
-        elevation = 5.dp
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(10.dp)
-        ) {
-            Image(
-                alignment = Alignment.Center,
-                painter = painterResource(id = restaurant.image),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(5.dp)
-                    .clip(RoundedCornerShape(25.dp)),
-            )
-            Column(
-                modifier = Modifier
-//                    .weight(1f)
-                    .padding(top = 10.dp)
-            ) {
-                Text(
-                    text = restaurant.name,
-                    color = Color.Black,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = restaurant.address,
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = restaurant.city,
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
-            }
-            FloatingActionButton(
-                onClick = { ScreenRouter.navigateTo(2) },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.End),
-                backgroundColor = myYellow,
-                contentColor = myGreen,
-                shape = CircleShape,
-                elevation = FloatingActionButtonDefaults.elevation(3.dp),
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.eye2),
-                    tint = myGreen,
-                    contentDescription = "eye",
-                    modifier = Modifier.padding(6.dp)
-                )
-            }
-        }
-    }
-}
 
-
-@Composable
-fun DishCard() {
-    val (count, updateCount) = remember { mutableStateOf(0) }
-    Box(
-        contentAlignment = Alignment.TopCenter,
-        modifier = Modifier.padding(start = 20.dp)
-    ) {
-        Card(
-            modifier = Modifier
-                .padding(top = 30.dp)
-                .width(180.dp),
-            shape = RoundedCornerShape(14.dp),
-            elevation = 5.dp
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Bottom,
-                modifier = Modifier
-                    .padding(top = 100.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
-            ) {
-                Text(
-                    text = "Sashimi",
-                    color = Color.Black,
-                    fontSize = 16.sp
-                )
-                Text(
-                    text = "€8.50",
-                    color = myYellow,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                QuantityCounter(
-                    modifier = Modifier.align(Alignment.End),
-                    count = count,
-                    remove = { if (count > 0) updateCount(count - 1) },
-                    add = { updateCount(count + 1) }
-                )
-                /*IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .background(color = myYellow, shape = RoundedCornerShape(10.dp)
-                    )
-            ) {
-                Icon(Icons.Default.Add, tint = myGreen,  contentDescription = null)
-            }*/
-            }
-
-        }
-        Image(
-            alignment = Alignment.Center,
-            painter = painterResource(id = R.drawable.sashimi),
-            contentDescription = null,
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(130.dp)
-        )
-    }
-}
 
 @Composable
 fun Menu(){
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+
+    val starters = rememberSaveable { DataProvider.starterList }
 
     Image(
         modifier = Modifier.fillMaxSize(),
@@ -376,15 +264,31 @@ fun Menu(){
             contentDescription = "",
             contentScale = ContentScale.FillHeight,
         )
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                modifier = Modifier.padding(start = 20.dp),
-                text = "Secondi",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            DishCard()
+        Column(modifier = Modifier
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState())) {
+            Title(title = "Starters")
+            LazyRow{
+                items(
+                    items = starters,
+                    itemContent = {
+                        DishCard(dish = it)
+                    }
+                )
+            }
+//            DishCard()
+            Title(title = "First courses")
+//            DishCard()
+            Title(title = "Second courses")
+//            DishCard()
+            Title(title = "Sides")
+//            DishCard()
+            Title(title = "Fruits")
+//            DishCard()
+            Title(title = "Desserts")
+//            DishCard()
+            Title(title = "Drinks")
+//            DishCard()
         }
 
     }
@@ -406,3 +310,18 @@ fun Course(image: Int, description: String){
     Text(text = description, color = myYellow, fontSize = 10.sp)
 }
 
+@Composable
+fun Title(title: String){
+    Divider(
+        modifier = Modifier.padding(top = 20.dp),
+        color = Color.Black,
+        thickness = 1.dp
+    )
+    Text(
+        modifier = Modifier.padding(start = 20.dp, top = 5.dp),
+        text = title,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.Black
+    )
+}
