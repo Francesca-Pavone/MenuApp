@@ -66,5 +66,5 @@ fun QuantityCounter(modifier: Modifier = Modifier, count: Int, remove: () -> Uni
 @Preview
 @Composable
 fun Preview() {
-    QuantityCounter(count = 1, remove = { }, add = {})
+    QuantityCounter(count = 1, remove = { }, add = { })
 }
