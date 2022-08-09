@@ -42,11 +42,12 @@ fun DishCard(dish: Dish) {
             ) {
                 Text(
                     text = dish.name,
+                    modifier = Modifier.padding(top = 5.dp),
                     color = Color.Black,
                     fontSize = 16.sp
                 )
                 Text(
-                    text = "€8.50", /*TODO*/
+                    text = "€${dish.price}0",
                     color = myYellow,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
