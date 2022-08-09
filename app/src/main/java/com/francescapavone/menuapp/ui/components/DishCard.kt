@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,7 +24,7 @@ import com.francescapavone.menuapp.ui.theme.myYellow
 
 @Composable
 fun DishCard(dish: Dish) {
-    val (count, updateCount) = remember { mutableStateOf(0) }
+    val (count, updateCount) = rememberSaveable { mutableStateOf(0) }
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.padding(start = 20.dp)
