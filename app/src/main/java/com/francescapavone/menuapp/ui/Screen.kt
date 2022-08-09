@@ -1,20 +1,18 @@
 package com.francescapavone.menuapp.ui
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyGridScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,23 +21,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.francescapavone.menuapp.R
 import com.francescapavone.menuapp.ui.components.DishCard
-import com.francescapavone.menuapp.ui.components.QuantityCounter
 import com.francescapavone.menuapp.ui.components.RestaurantCard
 import com.francescapavone.menuapp.ui.data.DataProvider
-import com.francescapavone.menuapp.ui.data.Restaurant
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,6 +42,16 @@ fun HomePage(){
 
     val restaurants = rememberSaveable { DataProvider.restaurantList }
 
+    val conf = LocalConfiguration.current
+
+    val portrait = when (conf.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            false
+        }
+        else -> {
+            true
+        }
+    }
 
     Image(
         modifier = Modifier.fillMaxSize(),
@@ -64,32 +68,58 @@ fun HomePage(){
                 backgroundColor = myYellow,
                 contentColor = myGreen,
                 shape = CircleShape,
-                elevation = FloatingActionButtonDefaults.elevation(5.dp),
+                elevation = FloatingActionButtonDefaults.elevation(5.dp)
             ) {
                 Image(painter = painterResource(id = R.drawable.shop_bag2), contentDescription = "shoppingCart")
             }
         },
-        floatingActionButtonPosition = FabPosition.End,
-        //isFloatingActionButtonDocked = true,
-        //bottomBar = { BottomBar() },
-        topBar = { TopBar(restaurantName) },
+        floatingActionButtonPosition = if(portrait) FabPosition.End else FabPosition.Center,
+        isFloatingActionButtonDocked = !portrait,
+        bottomBar = { if (!portrait) BottomBar() },
+        topBar = { if (portrait) TopBar(restaurantName) },
     ) {paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Recommended",
-                modifier = Modifier.padding(top = 20.dp, bottom = 20.dp),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
+        if(portrait) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(paddingValues)
+            ) {
+                LazyRow(
+                    contentPadding = PaddingValues(start = 110.dp, top = 100.dp),
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    items(
+                        items = restaurants,
+                        itemContent = {
+                            RestaurantCard(restaurant = it)
+                        }
+                    )
+                }
+                FloatingActionButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .padding(start = 15.dp, bottom = 15.dp)
+                        .size(64.dp)
+                        .align(Alignment.BottomStart),
+                    backgroundColor = myGreen,
+                    contentColor = myYellow,
+                    shape = CircleShape,
+                    elevation = FloatingActionButtonDefaults.elevation(5.dp)
+                ) {
+                    Icon(
+                        Icons.Rounded.Favorite,
+                        contentDescription = "Localized description",
+                    )
+                }
 
+            }
+        } else {
             LazyRow(
-            contentPadding = PaddingValues(start = 110.dp)
+                contentPadding = PaddingValues(start = 110.dp, top = 10.dp),
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .verticalScroll(rememberScrollState())
             ) {
                 items(
                     items = restaurants,
@@ -98,18 +128,6 @@ fun HomePage(){
                     }
                 )
             }
-
-            //RestaurantCard()
-            /*Text(
-                modifier = Modifier.padding(start = 20.dp),
-                text = "Your favourites",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                style = TextStyle(
-                    color = Color.Black
-                )
-            )
-            */
         }
     }
 }
@@ -161,7 +179,7 @@ fun TopBar(restaurant: MutableState<String>) {
     }
 }
 
-/*@Composable
+@Composable
 fun BottomBar(){
     BottomAppBar(
         elevation = AppBarDefaults.BottomAppBarElevation,
@@ -171,16 +189,16 @@ fun BottomBar(){
         contentPadding = AppBarDefaults.ContentPadding
     ) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-            IconButton(onClick = { *//* doSomething() *//* }) {
+            IconButton(onClick = {  doSomething()  }) {
                 Icon(
-                    Icons.Rounded.Home,
+                    Icons.Rounded.Favorite,
                     contentDescription = "Localized description",
                     tint = myYellow
                 )
             }
         }
         Spacer(Modifier.weight(1f, true))
-        IconButton(onClick = { *//* doSomething() *//* }) {
+        IconButton(onClick = {  doSomething()  }) {
             Icon(
                 Icons.Rounded.Search,
                 contentDescription = "Localized description",
@@ -188,8 +206,11 @@ fun BottomBar(){
             )
         }
     }
-}*/
+}
 
+fun doSomething() {
+    TODO("Not yet implemented")
+}
 
 
 @Composable
@@ -232,7 +253,7 @@ fun Menu(){
             }
         },
         floatingActionButtonPosition = FabPosition.End,
-        drawerContent = {
+        /*drawerContent = {
             Box(
                 Modifier
                     .fillMaxHeight()
@@ -267,9 +288,9 @@ fun Menu(){
         },
         drawerBackgroundColor = Color.Transparent,
         drawerElevation = 0.dp,
-        drawerGesturesEnabled = true
+        drawerGesturesEnabled = true*/
     ) {
-        Image(
+    /*    Image(
             modifier = Modifier
                 .offset((-65).dp, 0.dp)
                 .clickable(onClick = { scope.launch { if (scaffoldState.drawerState.isClosed) scaffoldState.drawerState.open() else scaffoldState.drawerState.close() } })
@@ -277,54 +298,16 @@ fun Menu(){
             painter = painterResource(id = R.drawable.side_menu),
             contentDescription = "",
             contentScale = ContentScale.FillHeight,
-        )
-
-/*
-        var i = 0
-
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxWidth(),
-            contentPadding = PaddingValues( 20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            items(
-                items = ordersName
-            ) {
-                Text(
-                    modifier = Modifier.padding(start = 20.dp, bottom = 10.dp),
-                    text = it,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
-                LazyRow {
-                    items(
-                        items = orders[i],
-                        itemContent = { it1 ->
-                            DishCard(dish = it1)
-                        }
-                    )
-                }
-                i++
-                Divider(
-                    modifier = Modifier.padding(20.dp),
-                    color = Color.Black,
-                    thickness = 1.dp
-                )
-
-            }
-        }
-*/
-
+        )*/
 
         Column(modifier = Modifier
-            .padding(20.dp)
             .verticalScroll(rememberScrollState())) {
 
             Title(title = "Starters")
-            LazyRow{
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(20.dp)
+            ){
                 items(
                     items = starters,
                     itemContent = {
@@ -334,7 +317,10 @@ fun Menu(){
             }
 
             Title(title = "First courses")
-            LazyRow{
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(20.dp)
+            ){
                 items(
                     items = firstCourses,
                     itemContent = {
@@ -344,7 +330,10 @@ fun Menu(){
             }
 
             Title(title = "Second courses")
-            LazyRow{
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(20.dp)
+            ){
                 items(
                     items = secondCourses,
                     itemContent = {
@@ -354,7 +343,10 @@ fun Menu(){
             }
 
             Title(title = "Sides")
-            LazyRow{
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(20.dp)
+            ){
                 items(
                     items = sides,
                     itemContent = {
@@ -364,7 +356,10 @@ fun Menu(){
             }
 
             Title(title = "Fruits")
-            LazyRow{
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(20.dp)
+            ){
                 items(
                     items = fruits,
                     itemContent = {
@@ -374,7 +369,10 @@ fun Menu(){
             }
 
             Title(title = "Desserts")
-            LazyRow{
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(20.dp)
+            ){
                 items(
                     items = desserts,
                     itemContent = {
@@ -384,7 +382,10 @@ fun Menu(){
             }
 
             Title(title = "Drinks")
-            LazyRow{
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(20.dp)
+            ){
                 items(
                     items = drinks,
                     itemContent = {
@@ -429,12 +430,12 @@ fun Course(image: Int, description: String, id: Int){
 @Composable
 fun Title(title: String){
     Divider(
-        modifier = Modifier.padding(top = 20.dp),
+        modifier = Modifier.padding(20.dp),
         color = Color.Black,
         thickness = 1.dp
     )
     Text(
-        modifier = Modifier.padding(start = 20.dp, top = 20.dp, bottom = 10.dp),
+        modifier = Modifier.padding(start = 20.dp, bottom = 10.dp),
         text = title,
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold,

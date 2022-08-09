@@ -84,6 +84,15 @@ fun RestaurantCard(restaurant: Restaurant) {
                         thickness = 1.dp
                     )
                     Text(
+                        text = restaurant.price,
+                        color = Color.Gray,
+                        fontSize = 14.sp
+                    )
+                    Divider(
+                        color = Color.Gray,
+                        thickness = 1.dp
+                    )
+                    Text(
                         text = restaurant.address,
 //                        maxLines = 1,
 //                        overflow = TextOverflow.Ellipsis,
@@ -105,15 +114,6 @@ fun RestaurantCard(restaurant: Restaurant) {
                     )
                     Text(
                         text = restaurant.phone,
-                        color = Color.Gray,
-                        fontSize = 14.sp
-                    )
-                    Divider(
-                        color = Color.Gray,
-                        thickness = 1.dp
-                    )
-                    Text(
-                        text = restaurant.price,
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
