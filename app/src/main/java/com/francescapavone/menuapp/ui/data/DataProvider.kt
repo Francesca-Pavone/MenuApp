@@ -1,5 +1,7 @@
 package com.francescapavone.menuapp.ui.data
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import com.francescapavone.menuapp.R
 
 object DataProvider {
@@ -57,7 +59,7 @@ object DataProvider {
         ),
         Dish(
             id = 1,
-            name = "Bruschete al pomodoro",
+            name = "Bruschette al pomodoro",
             price = 5.50,
             image = R.drawable.bruschette
         )
@@ -66,31 +68,31 @@ object DataProvider {
 
     val firstCoursesList = listOf(
         Dish(
-            id = 0,
+            id = 2,
             name = "Cozze e pesto di pistacchi",
             price = 12.50,
             image = R.drawable.pasta_cozze_pistacchi
         ),
         Dish(
-            id = 1,
+            id = 3,
             name = "Tonno e zucchine",
             price = 11.00,
             image = R.drawable.pasta_tonno_zucchine
         ),
         Dish(
-            id = 2,
+            id = 4,
             name = "Pasta allo scoglio",
             price = 11.50,
             image = R.drawable.primo_pesce
         ),
         Dish(
-            id = 3,
+            id = 5,
             name = "Pappardelle ai porcini",
             price = 11.00,
             image = R.drawable.pappardelle_porcini
         ),
         Dish(
-            id = 4,
+            id = 6,
             name = "Tagliatelle al ragù",
             price = 10.50,
             image = R.drawable.tagliatelle_ragu
@@ -99,13 +101,13 @@ object DataProvider {
 
     val secondCourseList = listOf(
         Dish(
-            id = 0,
+            id = 7,
             name = "Tagliata di manzo",
             price = 12.00,
             image = R.drawable.tagliata_manzo
         ),
         Dish(
-            id = 1,
+            id = 8,
             name = "Cotoletta",
             price = 7.50,
             image = R.drawable.cotoletta
@@ -114,19 +116,19 @@ object DataProvider {
 
     val sideList = listOf(
         Dish(
-            id = 0,
+            id = 9,
             name = "Patate",
             price = 3.50,
             image = R.drawable.patate
         ),
         Dish(
-            id = 1,
+            id = 10,
             name = "Insalata greca",
             price = 4.00,
             image = R.drawable.insalata_greca
         ),
         Dish(
-            id = 2,
+            id = 11,
             name = "Zucchine grigliate",
             price = 3.00,
             image = R.drawable.zucchine_grigliate
@@ -135,13 +137,13 @@ object DataProvider {
 
     val fruitList = listOf(
         Dish(
-            id = 0,
+            id = 12,
             name = "Frutta mista",
             price = 4.50,
             image = R.drawable.piatto_misto_frutta
         ),
         Dish(
-            id = 1,
+            id = 13,
             name = "Spiedini di frutta",
             price = 3.50,
             image = R.drawable.spiedini_frutta
@@ -150,19 +152,19 @@ object DataProvider {
 
     val dessertList = listOf(
         Dish(
-            id = 0,
+            id = 14,
             name = "Panna cotta al mango",
             price = 4.50,
             image = R.drawable.panna_cotta_mango
         ),
         Dish(
-            id = 1,
+            id = 15,
             name = "Mille foglie",
             price = 4.50,
             image = R.drawable.millefoglie
         ),
         Dish(
-            id = 2,
+            id = 16,
             name = "Cheescake alla fragola",
             price = 5.00,
             image = R.drawable.cheesecake
@@ -171,29 +173,40 @@ object DataProvider {
 
     val drinkList = listOf(
         Dish(
-            id = 0,
+            id = 17,
             name = "Acqua naturale",
             price = 2.00,
             image = R.drawable.acqua_naturale
         ),
         Dish(
-            id = 1,
+            id = 18,
             name = "Acqua frizzante",
             price = 2.00,
             image = R.drawable.acqua_frizzante
         ),
         Dish(
-            id = 2,
+            id = 19,
             name = "Coca-Cola",
             price = 3.00,
             image = R.drawable.coca_cola
         ),
         Dish(
-            id = 0,
+            id = 20,
             name = "Birra Beck's",
             price = 4.00,
             image = R.drawable.becks
         )
     )
+
+/*     starterList,
+        firstCoursesList,
+        secondCourseList,
+        sideList,
+        fruitList,
+        dessertList,
+        drinkList*/
+
+    val orderedList = listOf<Dish>()
+
 
 }

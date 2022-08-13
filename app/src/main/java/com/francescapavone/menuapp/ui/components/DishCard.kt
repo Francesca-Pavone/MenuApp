@@ -1,14 +1,15 @@
 package com.francescapavone.menuapp.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,16 +19,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.francescapavone.menuapp.R
 import com.francescapavone.menuapp.ui.data.Dish
 import com.francescapavone.menuapp.ui.theme.myYellow
 
 @Composable
-fun DishCard(dish: Dish) {
-    val (count, updateCount) = rememberSaveable { mutableStateOf(0) }
+fun DishCard(dish: Dish, subtotal: MutableState<Double>, orderList: MutableList<Dish> ) {
+    val (count, updateCount) = rememberSaveable { mutableStateOf(dish.count) }
     Box(
         contentAlignment = Alignment.TopCenter,
-        modifier = Modifier.padding(start = 20.dp)
+        modifier = Modifier
+            .padding(start = 20.dp)
     ) {
         Card(
             modifier = Modifier
@@ -54,10 +55,26 @@ fun DishCard(dish: Dish) {
                     fontWeight = FontWeight.Bold
                 )
                 QuantityCounter(
-                    modifier = Modifier.align(Alignment.End),
+                    modifier = Modifier
+                        .align(Alignment.End),
                     count = count,
-                    remove = { if (count > 0) updateCount(count - 1) },
-                    add = { updateCount(count + 1) }
+                    remove = {
+                        if (count > 0) {
+                            updateCount(count - 1)
+                            dish.count = count
+                            subtotal.value = subtotal.value - dish.price
+                        }else{
+                            orderList.remove(dish)
+                        }
+                    },
+                    add = {
+                        if (count == 0)
+                            orderList.add(dish)
+                        updateCount(count + 1)
+                        dish.count = count
+                        subtotal.value = subtotal.value + dish.price
+
+                    }
                 )
                 /*IconButton(
                 onClick = { },
@@ -77,6 +94,82 @@ fun DishCard(dish: Dish) {
             modifier = Modifier
                 .clip(CircleShape)
                 .size(130.dp)
+        )
+    }
+}
+
+@Composable
+fun OrderedDishCard(dish: Dish, subtotal: MutableState<Double>, orderList: MutableList<Dish>){
+    val (count, updateCount) = rememberSaveable { mutableStateOf(dish.count) }
+    Box(
+        contentAlignment = Alignment.TopCenter,
+        modifier = Modifier
+            .padding(start = 20.dp)
+    ){
+        Card(
+            modifier = Modifier
+                .padding(end = 30.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(14.dp),
+            elevation = 5.dp
+        ){
+           Row(
+               horizontalArrangement = Arrangement.Start,
+               modifier = Modifier
+                   .padding(end = 100.dp, start = 20.dp, top = 10.dp, bottom = 10.dp)
+
+           ) {
+               Image(
+                   alignment = Alignment.Center,
+                   painter = painterResource(id = dish.image),
+                   contentDescription = null,
+                   modifier = Modifier
+                       .clip(CircleShape)
+                       .size(90.dp)
+               )
+               Column(
+                   horizontalAlignment = Alignment.Start,
+                   modifier = Modifier.padding(start = 10.dp)
+               ) {
+                   Text(
+                       text = dish.name,
+                       modifier = Modifier.padding(top = 5.dp),
+                       color = Color.Black,
+                       fontSize = 16.sp
+                   )
+                   Text(
+                       modifier = Modifier.padding(top = 10.dp),
+                       text = "€${dish.price}0",
+                       color = myYellow,
+                       fontSize = 18.sp,
+                       fontWeight = FontWeight.Bold
+                   )
+               }
+           }
+        }
+        QuantityCounter(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .background(color = myYellow, shape = RoundedCornerShape(50))
+                .padding(5.dp),
+            count = count,
+            remove = {
+                if (count > 0){
+                    updateCount(count - 1)
+                    dish.count = count
+                    subtotal.value = subtotal.value - dish.price
+                }else{
+                    orderList.remove(dish)
+                }
+            },
+            add = {
+                if(!orderList.contains(dish))
+                    orderList.add(dish)
+                updateCount(count + 1)
+                dish.count = count
+                subtotal.value = subtotal.value + dish.price
+            }
         )
     }
 }
