@@ -34,7 +34,7 @@ fun QuantityCounter(modifier: Modifier = Modifier, count: Int, remove: () -> Uni
                 .height(25.dp)
                 .background(color = myYellow, shape = RoundedCornerShape(50)))
         {
-            Icon(modifier = Modifier.padding(1.dp), painter = painterResource(id = R.drawable.ic_baseline_remove_24), tint = myGreen,  contentDescription = "add")
+            Icon(modifier = Modifier.padding(3.dp), painter = painterResource(id = R.drawable.ic_baseline_remove_24), tint = myGreen,  contentDescription = "add")
         }
 
         Crossfade(
@@ -58,7 +58,7 @@ fun QuantityCounter(modifier: Modifier = Modifier, count: Int, remove: () -> Uni
                 .height(25.dp)
                 .background(color = myYellow, shape = RoundedCornerShape(50)))
         {
-            Icon(Icons.Default.Add, tint = myGreen,  contentDescription = "add")
+            Icon(modifier = Modifier.padding(3.dp), imageVector = Icons.Default.Add, tint = myGreen,  contentDescription = "add")
         }
     }
 }
