@@ -19,11 +19,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.francescapavone.menuapp.model.Course
 import com.francescapavone.menuapp.ui.data.Dish
 import com.francescapavone.menuapp.ui.theme.myYellow
 
 @Composable
-fun DishCard(dish: Dish, subtotal: MutableState<Double>, orderList: MutableList<Dish> ) {
+fun DishCard( dish: Dish, subtotal: MutableState<Double>, orderList: MutableList<Dish> ) {
     val (count, updateCount) = rememberSaveable { mutableStateOf(dish.count) }
     Box(
         contentAlignment = Alignment.TopCenter,
@@ -59,31 +60,22 @@ fun DishCard(dish: Dish, subtotal: MutableState<Double>, orderList: MutableList<
                         .align(Alignment.End),
                     count = count,
                     remove = {
+                        if (count == 1)
+                            orderList.remove(dish)
                         if (count > 0) {
                             updateCount(count - 1)
-                            dish.count = count
+                            dish.count = count -1
                             subtotal.value = subtotal.value - dish.price
-                        }else{
-                            orderList.remove(dish)
                         }
                     },
                     add = {
                         if (count == 0)
                             orderList.add(dish)
                         updateCount(count + 1)
-                        dish.count = count
+                        dish.count = count + 1
                         subtotal.value = subtotal.value + dish.price
-
                     }
                 )
-                /*IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .background(color = myYellow, shape = RoundedCornerShape(10.dp)
-                    )
-            ) {
-                Icon(Icons.Default.Add, tint = myGreen,  contentDescription = null)
-            }*/
             }
 
         }
@@ -155,19 +147,19 @@ fun OrderedDishCard(dish: Dish, subtotal: MutableState<Double>, orderList: Mutab
                 .padding(5.dp),
             count = count,
             remove = {
+                if (count == 1)
+                    orderList.remove(dish)
                 if (count > 0){
                     updateCount(count - 1)
-                    dish.count = count
+                    dish.count = count - 1
                     subtotal.value = subtotal.value - dish.price
-                }else{
-                    orderList.remove(dish)
                 }
             },
             add = {
                 if(!orderList.contains(dish))
                     orderList.add(dish)
                 updateCount(count + 1)
-                dish.count = count
+                dish.count = count + 1
                 subtotal.value = subtotal.value + dish.price
             }
         )
