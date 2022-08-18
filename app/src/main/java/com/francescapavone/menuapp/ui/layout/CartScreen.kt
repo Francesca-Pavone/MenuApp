@@ -1,5 +1,6 @@
 package com.francescapavone.menuapp.ui.layout
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,13 +25,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.francescapavone.menuapp.R
+import com.francescapavone.menuapp.model.Course
 import com.francescapavone.menuapp.ui.components.OrderedDishCard
 import com.francescapavone.menuapp.ui.data.Dish
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
 
 @Composable
-fun Cart(subtotal: MutableState<Double>, orderList: MutableList<Dish> ){
+fun Cart(subtotal: MutableState<Double>, orderList: MutableList</*Dish*/Course> ){
 
     Image(
         modifier = Modifier.fillMaxSize(),
@@ -67,7 +70,7 @@ fun Cart(subtotal: MutableState<Double>, orderList: MutableList<Dish> ){
                     items(
                         items = orderList,
                         itemContent = {
-                            OrderedDishCard(dish = it, subtotal = subtotal, orderList = orderList)
+                            OrderedDishCard(course = it, subtotal = subtotal, orderList = orderList)
                         }
                     )
                 }
@@ -82,6 +85,17 @@ fun Cart(subtotal: MutableState<Double>, orderList: MutableList<Dish> ){
 
 @Composable
 fun CartBottomBar(subtotal: MutableState<Double>){
+    val conf = LocalConfiguration.current
+
+    val portrait = when (conf.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            false
+        }
+        else -> {
+            true
+        }
+    }
+
     Column(
         modifier = Modifier
             .background(
@@ -90,17 +104,17 @@ fun CartBottomBar(subtotal: MutableState<Double>){
             )
             .padding(20.dp)
     ) {
-        TextAndPrice(text = "Subtotal", price = subtotal.value)
-        TextAndPrice(text = "Service", price = subtotal.value*0.10)
+        TextAndPrice(text = "Subtotal", price = subtotal.value, portrait)
+        TextAndPrice(text = "Delivery", price = 2.0, portrait)
         Divider(
-            modifier = Modifier.padding(vertical = 10.dp),
+            modifier = Modifier.padding(vertical = if (portrait) 10.dp else 5.dp),
             color = Color.Black,
             thickness = 1.dp
         )
-        TextAndPrice(text = "Total", price = subtotal.value + subtotal.value*0.10)
+        TextAndPrice(text = "Total", price = subtotal.value + 2, portrait)
         TextButton(
             modifier = Modifier
-                .padding(top = 20.dp)
+                .padding(top = if (portrait) 20.dp else 0.dp)
                 .align(Alignment.CenterHorizontally),
             onClick = { /*TODO*/ },
             shape = RoundedCornerShape(30),
@@ -122,9 +136,9 @@ fun CartBottomBar(subtotal: MutableState<Double>){
 }
 
 @Composable
-fun TextAndPrice(text: String, price: Double){
+fun TextAndPrice(text: String, price: Double, portrait: Boolean){
     Row(
-        modifier = Modifier.padding(vertical = 5.dp)
+        modifier = Modifier.padding(vertical = if (portrait) 5.dp else 2.dp)
     ) {
         Text(
             modifier = Modifier

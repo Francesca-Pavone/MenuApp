@@ -26,11 +26,13 @@ import java.lang.Exception
 @Composable
 fun NetworkImageComponentPicasso(
     url: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    size: Int
+
 ) {
     val context = LocalContext.current
     val sizeModifier = modifier
-        .size(128.dp, 128.dp)
+        .size(size.dp)
         .sizeIn(maxHeight = 40.dp)
 
     val error = BitmapFactory.decodeResource(context.resources, R.drawable.intl_closed)
