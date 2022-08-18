@@ -1,5 +1,7 @@
 package com.francescapavone.menuapp.ui.components
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,24 +14,36 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.francescapavone.menuapp.R
+import com.francescapavone.menuapp.api.RestaurantApi
+import com.francescapavone.menuapp.model.Course
+import com.francescapavone.menuapp.model.RestaurantPreview
 import com.francescapavone.menuapp.ui.data.Restaurant
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
+import com.francescapavone.menuapp.ui.utils.NetworkImageComponentPicasso
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.json.JSONException
+import org.json.JSONObject
 
 @Composable
-fun RestaurantCard(restaurant: Restaurant) {
-
+fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>, ) {
+    val total = rememberSaveable { mutableStateOf(0) }
+    val context = LocalContext.current
+    val s = RestaurantApi(context)
     val moreInfo = rememberSaveable { mutableStateOf(false) }
 
     Card(
@@ -44,27 +58,37 @@ fun RestaurantCard(restaurant: Restaurant) {
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            Image(
+            /*Image(
                 alignment = Alignment.Center,
                 painter = painterResource(id = restaurant.image),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(5.dp)
                     .clip(RoundedCornerShape(25.dp)),
-            )
+            )*/
+
+            NetworkImageComponentPicasso(
+                url = restaurantPreview.poster,
+                modifier = Modifier
+                    .padding(5.dp)
+                    .clip(RoundedCornerShape(25.dp))
+                    .align(Alignment.CenterHorizontally),
+                size = 130)
+
+
             Column(
                 modifier = Modifier
 //                    .weight(1f)
                     .padding(top = 10.dp)
             ) {
                 Text(
-                    text = restaurant.name,
+                    text = restaurantPreview.name,
                     color = Color.Black,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = restaurant.type,
+                    text = restaurantPreview.type,
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
@@ -84,7 +108,7 @@ fun RestaurantCard(restaurant: Restaurant) {
                         thickness = 1.dp
                     )
                     Text(
-                        text = restaurant.price,
+                        text = restaurantPreview.price,
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
@@ -93,7 +117,7 @@ fun RestaurantCard(restaurant: Restaurant) {
                         thickness = 1.dp
                     )
                     Text(
-                        text = restaurant.address,
+                        text = restaurantPreview.address,
 //                        maxLines = 1,
 //                        overflow = TextOverflow.Ellipsis,
                         color = Color.Gray,
@@ -104,7 +128,7 @@ fun RestaurantCard(restaurant: Restaurant) {
                         thickness = 1.dp
                     )
                     Text(
-                        text = restaurant.city,
+                        text = restaurantPreview.city,
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
@@ -113,7 +137,7 @@ fun RestaurantCard(restaurant: Restaurant) {
                         thickness = 1.dp
                     )
                     Text(
-                        text = restaurant.phone,
+                        text = restaurantPreview.phone,
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
@@ -131,7 +155,55 @@ fun RestaurantCard(restaurant: Restaurant) {
             }
 
             FloatingActionButton(
-                onClick = { ScreenRouter.navigateTo(2) },
+                onClick = {
+                    //visualizza il menu
+                    println("Visualizza il menu per ${restaurantPreview.id}")
+                    s.getMenu(
+                        restaurantPreview.id,
+                        {
+                            val jo = JSONObject(it)
+                            try {
+                                total.value = jo.getInt("totalstarters")
+                                val ja = jo.getJSONArray("starters")
+                                val sType = object : TypeToken<List<Course>>() {}.type
+
+                                val gson = Gson()
+                                val l = gson.fromJson<List<Course>>(ja.toString(), sType)
+                                println(l)
+                                starters.clear()
+                                starters.addAll(l)
+                            } catch (e: JSONException) {
+                                Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        {
+                            Log.v("bo", "bo") //aggiungi commenti coerenti :(
+                        }
+                    )
+                    s.getMenu(
+                        restaurantPreview.id,
+                        {
+                            val jo = JSONObject(it)
+                            try {
+                                total.value = jo.getInt("totalfirstcourses")
+                                val ja = jo.getJSONArray("firstcourses")
+                                val sType = object : TypeToken<List<Course>>() {}.type
+
+                                val gson = Gson()
+                                val l = gson.fromJson<List<Course>>(ja.toString(), sType)
+                                println(l)
+                                firstcourses.clear()
+                                firstcourses.addAll(l)
+                            } catch (e: JSONException) {
+                                Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        {
+                            Log.v("bo", "bo") //aggiungi commenti coerenti :(
+                        }
+                    )
+                    ScreenRouter.navigateTo(2)
+                },
                 modifier = Modifier
                     .size(40.dp)
                     .align(Alignment.End),

@@ -1,7 +1,8 @@
 package com.francescapavone.menuapp.ui.layout
 
 import android.content.res.Configuration
-import androidx.activity.compose.BackHandler
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -9,37 +10,41 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.francescapavone.menuapp.R
-import com.francescapavone.menuapp.ui.components.DishCard
-import com.francescapavone.menuapp.ui.components.OrderedDishCard
+import com.francescapavone.menuapp.api.RestaurantApi
+import com.francescapavone.menuapp.model.Course
+import com.francescapavone.menuapp.model.RestaurantPreview
 import com.francescapavone.menuapp.ui.components.RestaurantCard
 import com.francescapavone.menuapp.ui.data.DataProvider
-import com.francescapavone.menuapp.ui.data.Dish
-import com.francescapavone.menuapp.ui.data.Restaurant
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.json.JSONException
+import org.json.JSONObject
 
 @Composable
-fun HomePage(){
+fun HomePage(list: SnapshotStateList<RestaurantPreview>, starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>){
     val restaurantName = rememberSaveable { mutableStateOf("") }
+    val total = rememberSaveable { mutableStateOf(0) }
+    val context = LocalContext.current
+    val s = RestaurantApi(context)
 
     val restaurants = rememberSaveable { DataProvider.restaurantList }
 
@@ -53,6 +58,28 @@ fun HomePage(){
             true
         }
     }
+
+    s.listAllPreviews(
+        {
+            val jo = JSONObject(it)
+            try {
+                total.value = jo.getInt("totalResults")
+                val ja = jo.getJSONArray("Restaurants")
+                val sType = object : TypeToken<List<RestaurantPreview>>() {}.type
+
+                val gson = Gson()
+                val l = gson.fromJson<List<RestaurantPreview>>(ja.toString(), sType)
+                println(l)
+                list.clear()
+                list.addAll(l)
+            } catch (e: JSONException) {
+                Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+            }
+        },
+        {
+            Log.v("IMDB", "KAOS")
+        }
+    )
 
     Image(
         modifier = Modifier.fillMaxSize(),
@@ -91,9 +118,9 @@ fun HomePage(){
                         .verticalScroll(rememberScrollState())
                 ) {
                     items(
-                        items = restaurants,
+                        items = list,
                         itemContent = {
-                            RestaurantCard(restaurant = it)
+                            RestaurantCard(restaurantPreview = it,starters,firstcourses)
                         }
                     )
                 }
@@ -110,7 +137,7 @@ fun HomePage(){
                 ) {
                     Icon(
                         modifier = Modifier.padding(18.dp),
-                        painter = painterResource(id = R.drawable.add_favourite),
+                        painter = painterResource(id = R.drawable.add_favorite),
                         contentDescription = "Localized description",
                     )
                 }
@@ -124,9 +151,9 @@ fun HomePage(){
                     .verticalScroll(rememberScrollState())
             ) {
                 items(
-                    items = restaurants,
+                    items = list,
                     itemContent = {
-                        RestaurantCard(restaurant = it)
+                        RestaurantCard(restaurantPreview = it,starters,firstcourses)
                     }
                 )
             }
