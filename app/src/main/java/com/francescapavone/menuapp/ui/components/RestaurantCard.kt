@@ -52,7 +52,7 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
             .padding(end = 20.dp)
             .width(180.dp),
         shape = RoundedCornerShape(14.dp),
-        backgroundColor = MaterialTheme.colors.surface,
+//        backgroundColor = MaterialTheme.colors.surface,
         elevation = 5.dp
     ) {
         Column(
@@ -84,7 +84,7 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
             ) {
                 Text(
                     text = restaurantPreview.name,
-                    color = MaterialTheme.colors.onSurface,
+//                    color = MaterialTheme.colors.onSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )

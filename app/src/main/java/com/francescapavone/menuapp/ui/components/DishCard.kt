@@ -72,7 +72,7 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
             .clickable { openDialog.value = true }
         ) {
         Card(
-            backgroundColor = MaterialTheme.colors.surface,
+//            backgroundColor = MaterialTheme.colors.surface,
             modifier = Modifier
                 .padding(top = 30.dp)
                 .width(180.dp),
@@ -87,7 +87,7 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
                 Text(
                     text = course.name,
                     modifier = Modifier.padding(top = 5.dp),
-                    color = MaterialTheme.colors.onSurface,
+//                    color = MaterialTheme.colors.onSurface,
                     fontSize = 16.sp
                 )
                 Text(
@@ -175,7 +175,6 @@ fun OrderedDishCard(course: Course/*dish: Dish*/, subtotal: MutableState<Double>
                    Text(
                        text = course.name,
                        modifier = Modifier.padding(top = 5.dp),
-                       color = Color.Black,
                        fontSize = 16.sp
                    )
                    Text(

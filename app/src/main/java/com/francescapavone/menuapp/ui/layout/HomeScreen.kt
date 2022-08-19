@@ -191,10 +191,11 @@ fun HomeTopBar(restaurant: MutableState<String>) {
                 //singleLine = true,
                 leadingIcon = { Icon(imageVector = Icons.Rounded.Search, contentDescription = "Search") },
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White,
+                    backgroundColor = MaterialTheme.colors.surface,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedLabelColor = myGreen
+                    focusedLabelColor = myGreen,
+                    textColor = Color.Gray
                 ),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
