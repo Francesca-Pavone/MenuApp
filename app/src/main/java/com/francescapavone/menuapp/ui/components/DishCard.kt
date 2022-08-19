@@ -14,7 +14,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,19 +23,19 @@ import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.NetworkImageComponentPicasso
 
 @Composable
-fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*orderList: MutableList<Dish>*/orderList: MutableList<Course> ) {
-//    val (count, updateCount) = rememberSaveable { mutableStateOf(dish.count) }
+fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*orderList: MutableList<Dish>*/orderList: MutableList<Course>, restaurantId: MutableState<Int> ) {
 
     println("here")
-    val (count, updateCount) = rememberSaveable { mutableStateOf(0) }
-    val openDialog = remember { mutableStateOf(false)  }
+    val (count, updateCount) = rememberSaveable { mutableStateOf(course.count) }
+    val openDialogDescription = remember { mutableStateOf(false) }
+    val openDialogNewRestaurant = remember { mutableStateOf(false) }
 
-    if (openDialog.value) {
+    if (openDialogDescription.value) {
         AlertDialog(
             shape = RoundedCornerShape(14.dp),
             modifier = Modifier.background(MaterialTheme.colors.surface),
             onDismissRequest = {
-                openDialog.value = false
+                openDialogDescription.value = false
             },
             title = {
                 Text(text = course.name, fontSize = 16.sp, color = MaterialTheme.colors.onSurface, fontWeight = FontWeight.Bold)
@@ -51,7 +50,7 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
                 ) {
                     Button(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { openDialog.value = false },
+                        onClick = { openDialogDescription.value = false },
                         colors = ButtonDefaults.buttonColors(backgroundColor = myYellow)
                     ) {
                         Text(
@@ -65,14 +64,66 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
         )
     }
 
+    if (openDialogNewRestaurant.value) {
+        AlertDialog(
+            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.background(MaterialTheme.colors.surface),
+            onDismissRequest = {
+                openDialogNewRestaurant.value = false
+            },
+            text = { Text(
+                text = "Sono presenti nel carrello prodotti di un altro ristorante.\nVuoi svuotare il carrello ed ordinare da questo ristorante?",
+                color = MaterialTheme.colors.onSurface
+            ) },
+            buttons = {
+                Row(
+                    modifier = Modifier.padding(all = 14.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        modifier = Modifier
+                            .wrapContentWidth(Alignment.Start),
+                        onClick = {
+                            orderList.removeAll(orderList)
+                            orderList.add(course)
+                            updateCount(count + 1)
+                            course.count = count + 1
+                            subtotal.value = course.price.toDouble()
+                            openDialogNewRestaurant.value = false
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = myYellow)
+                    ) {
+                        Text(
+                            text = "Accept",
+                            color = myGreen,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Button(
+                        modifier = Modifier.wrapContentWidth(Alignment.End),
+                        onClick = {
+                            openDialogNewRestaurant.value = false
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = myYellow)
+                    ) {
+                        Text(
+                            text = "Dismiss",
+                            color = myGreen,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        )
+    }
+
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier
             .padding(start = 20.dp)
-            .clickable { openDialog.value = true }
+            .clickable { openDialogDescription.value = true }
         ) {
         Card(
-            backgroundColor = MaterialTheme.colors.surface,
             modifier = Modifier
                 .padding(top = 30.dp)
                 .width(180.dp),
@@ -87,7 +138,6 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
                 Text(
                     text = course.name,
                     modifier = Modifier.padding(top = 5.dp),
-                    color = MaterialTheme.colors.onSurface,
                     fontSize = 16.sp
                 )
                 Text(
@@ -101,20 +151,30 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
                         .align(Alignment.End),
                     count = count,
                     remove = {
-                        if (count == 1)
+                        if (count == 1) {
                             orderList.remove(course)
+                            if (orderList.isEmpty())
+                                restaurantId.value = -1
+                        }
                         if (count > 0) {
                             updateCount(count - 1)
-//                            dish.count = count -1
+                            course.count = count -1
                             subtotal.value = subtotal.value - course.price.toDouble()
                         }
                     },
                     add = {
-                        if (count == 0)
+                        if (orderList.isEmpty())
+                            restaurantId.value = course.restaurantId.toInt()
+                        if (count == 0 && course.restaurantId.toInt() == restaurantId.value)
                             orderList.add(course)
-                        updateCount(count + 1)
-//                        dish.count = count + 1
-                        subtotal.value = subtotal.value + course.price.toDouble()
+                        if (course.restaurantId.toInt() == restaurantId.value) {
+                            updateCount(count + 1)
+                            course.count = count + 1
+                            subtotal.value = subtotal.value + course.price.toDouble()
+                        }else{
+                            openDialogNewRestaurant.value = true
+                        }
+
                     }
                 )
             }
@@ -135,9 +195,8 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
 
 @Composable
 fun OrderedDishCard(course: Course/*dish: Dish*/, subtotal: MutableState<Double>, orderList: MutableList</*Dish*/Course>){
-//    val (count, updateCount) = rememberSaveable { mutableStateOf(dish.count) }
 
-    val (count, updateCount) = rememberSaveable { mutableStateOf(0) }
+    val (count, updateCount) = rememberSaveable { mutableStateOf(course.count) }
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier
@@ -175,7 +234,6 @@ fun OrderedDishCard(course: Course/*dish: Dish*/, subtotal: MutableState<Double>
                    Text(
                        text = course.name,
                        modifier = Modifier.padding(top = 5.dp),
-                       color = Color.Black,
                        fontSize = 16.sp
                    )
                    Text(
@@ -199,7 +257,7 @@ fun OrderedDishCard(course: Course/*dish: Dish*/, subtotal: MutableState<Double>
                     orderList.remove(course)
                 if (count > 0){
                     updateCount(count - 1)
-//                    dish.count = count - 1
+                    course.count = count - 1
                     subtotal.value = subtotal.value - course.price.toDouble()
                 }
             },
@@ -207,7 +265,7 @@ fun OrderedDishCard(course: Course/*dish: Dish*/, subtotal: MutableState<Double>
                 if(!orderList.contains(course))
                     orderList.add(course)
                 updateCount(count + 1)
-//                dish.count = count + 1
+                course.count = count + 1
                 subtotal.value = subtotal.value + course.price.toDouble()
             }
         )

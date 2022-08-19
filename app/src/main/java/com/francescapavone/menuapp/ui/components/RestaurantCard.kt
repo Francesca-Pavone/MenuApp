@@ -40,8 +40,16 @@ import org.json.JSONException
 import org.json.JSONObject
 
 @Composable
-fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>, secondcourses: SnapshotStateList<Course>, sides: SnapshotStateList<Course>, fruits: SnapshotStateList<Course>, desserts: SnapshotStateList<Course>, drinks: SnapshotStateList<Course>) {
-    val restaurantName = rememberSaveable { mutableStateOf("") }
+fun RestaurantCard(
+    restaurantPreview: RestaurantPreview,
+    starters: SnapshotStateList<Course>,
+    firstcourses: SnapshotStateList<Course>,
+    secondcourses: SnapshotStateList<Course>,
+    sides: SnapshotStateList<Course>,
+    fruits: SnapshotStateList<Course>,
+    desserts: SnapshotStateList<Course>,
+    drinks: SnapshotStateList<Course>
+) {
     val total = rememberSaveable { mutableStateOf(0) }
     val context = LocalContext.current
     val s = RestaurantApi(context)
@@ -52,22 +60,13 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
             .padding(end = 20.dp)
             .width(180.dp),
         shape = RoundedCornerShape(14.dp),
-        backgroundColor = MaterialTheme.colors.surface,
+//        backgroundColor = MaterialTheme.colors.surface,
         elevation = 5.dp
     ) {
         Column(
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            /*Image(
-                alignment = Alignment.Center,
-                painter = painterResource(id = restaurant.image),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(5.dp)
-                    .clip(RoundedCornerShape(25.dp)),
-            )*/
-
             NetworkImageComponentPicasso(
                 url = restaurantPreview.poster,
                 modifier = Modifier
@@ -76,15 +75,12 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                     .align(Alignment.CenterHorizontally),
                 size = 130)
 
-
             Column(
                 modifier = Modifier
-//                    .weight(1f)
                     .padding(top = 10.dp)
             ) {
                 Text(
                     text = restaurantPreview.name,
-                    color = MaterialTheme.colors.onSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -119,8 +115,6 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                     )
                     Text(
                         text = restaurantPreview.address,
-//                        maxLines = 1,
-//                        overflow = TextOverflow.Ellipsis,
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
@@ -176,6 +170,11 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                             } catch (e: JSONException) {
                                 Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
                             }
+
+                            //set RESTAURANT ID
+                            for (i in starters) {
+                                i.restaurantId = restaurantPreview.id
+                            }
                         },
                         {
                             Log.v("bo", "bo") //aggiungi commenti coerenti :(
@@ -197,6 +196,9 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                                 firstcourses.addAll(l)
                             } catch (e: JSONException) {
                                 Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                            for (i in firstcourses) {
+                                i.restaurantId = restaurantPreview.id
                             }
                         },
                         {
@@ -220,6 +222,9 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                             } catch (e: JSONException) {
                                 Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
                             }
+                            for (i in secondcourses) {
+                                i.restaurantId = restaurantPreview.id
+                            }
                         },
                         {
                             Log.v("bo", "bo") //aggiungi commenti coerenti :(
@@ -241,6 +246,9 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                                 sides.addAll(l)
                             } catch (e: JSONException) {
                                 Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                            for (i in sides) {
+                                i.restaurantId = restaurantPreview.id
                             }
                         },
                         {
@@ -264,6 +272,9 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                             } catch (e: JSONException) {
                                 Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
                             }
+                            for (i in fruits) {
+                                i.restaurantId = restaurantPreview.id
+                            }
                         },
                         {
                             Log.v("bo", "bo") //aggiungi commenti coerenti :(
@@ -286,6 +297,9 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                             } catch (e: JSONException) {
                                 Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
                             }
+                            for (i in desserts) {
+                                i.restaurantId = restaurantPreview.id
+                            }
                         },
                         {
                             Log.v("bo", "bo") //aggiungi commenti coerenti :(
@@ -307,6 +321,9 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                                 drinks.addAll(l)
                             } catch (e: JSONException) {
                                 Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                            for (i in drinks) {
+                                i.restaurantId = restaurantPreview.id
                             }
                         },
                         {

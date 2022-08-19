@@ -41,9 +41,11 @@ class MainActivity : ComponentActivity() {
                 val desserts = remember { mutableStateListOf<Course>() }
                 val drinks = remember { mutableStateListOf<Course>() }
 
+                val restaurantId = rememberSaveable { mutableStateOf(-1) }
+
                 when(ScreenRouter.currentScreen.value) {
                     1 -> HomePage(previewslist, starters, firstcourses, secondcourses, sides, fruits, desserts, drinks)
-                    2 -> Menu(starters, firstcourses, secondcourses, sides, fruits, desserts, drinks, subtotal, orderList)
+                    2 -> Menu(restaurantId, starters, firstcourses, secondcourses, sides, fruits, desserts, drinks, subtotal, orderList)
                     3 -> Cart(subtotal, orderList)
                     4 -> FavoritePage()
                 }

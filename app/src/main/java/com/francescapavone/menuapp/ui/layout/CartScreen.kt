@@ -99,7 +99,7 @@ fun CartBottomBar(subtotal: MutableState<Double>){
     Column(
         modifier = Modifier
             .background(
-                color = Color.White,
+                color = MaterialTheme.colors.surface,
                 shape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp)
             )
             .padding(20.dp)
@@ -108,7 +108,7 @@ fun CartBottomBar(subtotal: MutableState<Double>){
         TextAndPrice(text = "Delivery", price = 2.0, portrait)
         Divider(
             modifier = Modifier.padding(vertical = if (portrait) 10.dp else 5.dp),
-            color = Color.Black,
+            color = MaterialTheme.colors.onSurface,
             thickness = 1.dp
         )
         TextAndPrice(text = "Total", price = subtotal.value + 2, portrait)
@@ -145,14 +145,16 @@ fun TextAndPrice(text: String, price: Double, portrait: Boolean){
                 .weight(1f)
                 .wrapContentWidth(Alignment.Start),
             text = text,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            color = MaterialTheme.colors.onSurface
         )
         Text(
             modifier = Modifier
                 .weight(1f)
                 .wrapContentWidth(Alignment.End),
             text = "€ ${String.format("%.2f", price)}" ,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            color = MaterialTheme.colors.onSurface
         )
     }
 }

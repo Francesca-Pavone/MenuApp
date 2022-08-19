@@ -16,8 +16,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,9 +29,23 @@ import com.francescapavone.menuapp.ui.components.DishCard
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
+import com.github.sumimakito.awesomeqr.AwesomeQrRenderer
+import com.github.sumimakito.awesomeqr.option.RenderOption
+
 
 @Composable
-fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>, secondcourses: SnapshotStateList<Course>, sides: SnapshotStateList<Course>, fruits: SnapshotStateList<Course>, desserts: SnapshotStateList<Course>, drinks: SnapshotStateList<Course>, subtotal: MutableState<Double>, /*orderList: MutableList<Dish>*/ orderList: MutableList<Course>){
+fun Menu(
+    restaurantId: MutableState<Int>,
+    starters: SnapshotStateList<Course>,
+    firstcourses: SnapshotStateList<Course>,
+    secondcourses: SnapshotStateList<Course>,
+    sides: SnapshotStateList<Course>,
+    fruits: SnapshotStateList<Course>,
+    desserts: SnapshotStateList<Course>,
+    drinks: SnapshotStateList<Course>,
+    subtotal: MutableState<Double>, /*orderList: MutableList<Dish>*/
+    orderList: MutableList<Course>
+){
     val scaffoldState = rememberScaffoldState()
 
 /*
@@ -47,13 +61,40 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
 //    val message = rememberSaveable{ mutableStateOf(if(!restaurant.value.favourite) "Add to favourites" else "Remove from favourites") }
 //    val favIcon = rememberSaveable { mutableStateOf(if(!restaurant.value.favourite) R.drawable.add_favorite else R.drawable.remove_favorite) }
 
-    val openDialog = remember { mutableStateOf(false)  }
+    val openDialog = remember { mutableStateOf(false) }
 
     if (openDialog.value) {
+        println(" Button pressed SHARE for id: " + starters[0].restaurantId)
+        //va bene qualsiasi id, prendo per semplicità quello del primo della lista
+        //CREATE QR CODE
+        val color = com.github.sumimakito.awesomeqr.option.color.Color()
+        color.light = 0xFFFFFFFF.toInt() // for blank spaces
+        color.dark = 0xFF2E7855.toInt() // for non-blank spaces
+        color.background =
+            0xFFFFFFFF.toInt() // for the background (will be overriden by background images, if set)
+        color.auto =
+            false // set to true to automatically pick out colors from the background image (will only work if background image is present)
+        val renderOption = RenderOption()
+        renderOption.content =
+            "https://github.com/al3ssandrocaruso/restaurantsappdata/raw/main/menus/PDFsMenu/${starters[0].restaurantId}.pdf" // content to encode
+        println("Generated QR Code for url: " + renderOption.content)
+        renderOption.size = 600 // size of the final QR code image
+        renderOption.borderWidth = 20 // width of the empty space around the QR code
+        renderOption.patternScale = 0.35f // (optional) specify a scale for patterns
+        //renderOption.roundedPatterns = true // (optional) if true, blocks will be drawn as dots instead
+        renderOption.clearBorder =
+            true // if set to true, the background will NOT be drawn on the border area
+        renderOption.color = color // set a color palette for the QR code
+        val result = AwesomeQrRenderer.render(renderOption)
         Dialog(onDismissRequest = { openDialog.value = false }) {
-            Image(painter = painterResource(id = R.drawable.qrcode), contentDescription = null)
+            Image(
+                bitmap = result.bitmap!!.asImageBitmap(),
+                contentDescription = "some useful description",
+            )
+            // Image(painter = painterResource(id = R.drawable.qrcode), contentDescription = null)
         }
     }
+
 
 
     Image(
@@ -149,7 +190,7 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
                         .size(50.dp)
                         .background(color = myYellow, shape = RoundedCornerShape(50)))
                 {
-                    Icon(modifier = Modifier.padding(15.dp), painter = painterResource(id = R.drawable.upload), tint = myGreen,  contentDescription = "add")
+                    Icon(modifier = Modifier.padding(15.dp), painter = painterResource(id = R.drawable.share), tint = myGreen,  contentDescription = "add")
                 }
 
                 TextButton(
@@ -177,7 +218,7 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
                         .size(50.dp)
                         .background(color = myYellow, shape = RoundedCornerShape(50)))
                 {
-                    Icon(modifier = Modifier.padding(15.dp), painter = painterResource(id = R.drawable.download), tint = myGreen,  contentDescription = "add")
+                    Icon(modifier = Modifier.padding(13.dp), painter = painterResource(id = R.drawable.download), tint = myGreen,  contentDescription = "add")
                 }
             }
 
@@ -189,7 +230,7 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
                 items(
                     items = starters,
                     itemContent = {
-                        DishCard(course = it, subtotal =  subtotal, orderList = orderList)
+                        DishCard(course = it, subtotal =  subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -202,7 +243,7 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
                 items(
                     items = firstcourses,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList)
+                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -215,7 +256,7 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
                 items(
                     items = secondcourses,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList)
+                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -228,7 +269,7 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
                 items(
                     items = sides,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList)
+                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -241,7 +282,7 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
                 items(
                     items = fruits,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList)
+                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -254,7 +295,7 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
                 items(
                     items = desserts,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList)
+                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -267,7 +308,7 @@ fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Co
                 items(
                     items = drinks,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList)
+                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
