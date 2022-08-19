@@ -40,13 +40,13 @@ import org.json.JSONException
 import org.json.JSONObject
 
 @Composable
-fun HomePage(list: SnapshotStateList<RestaurantPreview>, starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>){
+fun HomePage(list: SnapshotStateList<RestaurantPreview>, starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>, secondcourses: SnapshotStateList<Course>, sides: SnapshotStateList<Course>, fruits: SnapshotStateList<Course>, desserts: SnapshotStateList<Course>, drinks: SnapshotStateList<Course>){
     val restaurantName = rememberSaveable { mutableStateOf("") }
     val total = rememberSaveable { mutableStateOf(0) }
     val context = LocalContext.current
     val s = RestaurantApi(context)
 
-    val restaurants = rememberSaveable { DataProvider.restaurantList }
+//    val restaurants = rememberSaveable { DataProvider.restaurantList }
 
     val conf = LocalConfiguration.current
 
@@ -120,12 +120,12 @@ fun HomePage(list: SnapshotStateList<RestaurantPreview>, starters: SnapshotState
                     items(
                         items = list,
                         itemContent = {
-                            RestaurantCard(restaurantPreview = it,starters,firstcourses)
+                            RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks)
                         }
                     )
                 }
                 FloatingActionButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { ScreenRouter.navigateTo(4) },
                     modifier = Modifier
                         .padding(start = 15.dp, bottom = 15.dp)
                         .size(64.dp)
@@ -153,7 +153,7 @@ fun HomePage(list: SnapshotStateList<RestaurantPreview>, starters: SnapshotState
                 items(
                     items = list,
                     itemContent = {
-                        RestaurantCard(restaurantPreview = it,starters,firstcourses)
+                        RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks)
                     }
                 )
             }
@@ -217,7 +217,7 @@ fun HomeBottomBar(){
         contentPadding = AppBarDefaults.ContentPadding
     ) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { ScreenRouter.navigateTo(4) }) {
                 Icon(
                     Icons.Rounded.Favorite,
                     contentDescription = null,

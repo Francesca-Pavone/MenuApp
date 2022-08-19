@@ -16,6 +16,7 @@ import com.francescapavone.menuapp.ui.layout.Cart
 import com.francescapavone.menuapp.ui.layout.HomePage
 import com.francescapavone.menuapp.ui.layout.Menu
 import com.francescapavone.menuapp.ui.data.Restaurant
+import com.francescapavone.menuapp.ui.layout.FavoritePage
 import com.francescapavone.menuapp.ui.theme.MenuAppTheme
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
 
@@ -24,23 +25,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MenuAppTheme {
-                val restaurant = rememberSaveable {mutableStateOf(Restaurant(0, " ", " ", " ", " "," ", " ", 0, false)) }
+//                val restaurant = rememberSaveable {mutableStateOf(Restaurant(0, " ", " ", " ", " "," ", " ", 0, false)) }
                 val subtotal = rememberSaveable { mutableStateOf(0.0)}
+
                 val orderList = rememberSaveable { mutableListOf<Course>() }
 //                val orderList = rememberSaveable { mutableListOf<Dish>() }
-                val previewslist = remember {
-                    mutableStateListOf<RestaurantPreview>()
-                }
-                val starters = remember {
-                    mutableStateListOf<Course>()
-                }
-                val firstcourses = remember {
-                    mutableStateListOf<Course>()
-                }
+
+                val previewslist = remember { mutableStateListOf<RestaurantPreview>() }
+
+                val starters = remember { mutableStateListOf<Course>() }
+                val firstcourses = remember { mutableStateListOf<Course>() }
+                val secondcourses = remember { mutableStateListOf<Course>() }
+                val sides = remember { mutableStateListOf<Course>() }
+                val fruits = remember { mutableStateListOf<Course>() }
+                val desserts = remember { mutableStateListOf<Course>() }
+                val drinks = remember { mutableStateListOf<Course>() }
+
                 when(ScreenRouter.currentScreen.value) {
-                    1 -> HomePage(previewslist, starters, firstcourses)
-                    2 -> Menu(starters, firstcourses, subtotal, orderList)
+                    1 -> HomePage(previewslist, starters, firstcourses, secondcourses, sides, fruits, desserts, drinks)
+                    2 -> Menu(starters, firstcourses, secondcourses, sides, fruits, desserts, drinks, subtotal, orderList)
                     3 -> Cart(subtotal, orderList)
+                    4 -> FavoritePage()
                 }
 
             }
