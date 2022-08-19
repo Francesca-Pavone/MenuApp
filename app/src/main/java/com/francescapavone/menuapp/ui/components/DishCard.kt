@@ -34,14 +34,15 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
     if (openDialog.value) {
         AlertDialog(
             shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.background(MaterialTheme.colors.surface),
             onDismissRequest = {
                 openDialog.value = false
             },
             title = {
-                Text(text = course.name, fontSize = 16.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                Text(text = course.name, fontSize = 16.sp, color = MaterialTheme.colors.onSurface, fontWeight = FontWeight.Bold)
             },
             text = {
-                Text(text = course.description, fontSize = 14.sp, color = Color.Black)
+                Text(text = course.description, fontSize = 14.sp, color = MaterialTheme.colors.onSurface)
             },
             buttons = {
                 Row(
@@ -84,11 +85,9 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
                     .padding(top = 100.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
             ) {
                 Text(
-
-
                     text = course.name,
                     modifier = Modifier.padding(top = 5.dp),
-                    color = Color.Black,
+                    color = MaterialTheme.colors.onSurface,
                     fontSize = 16.sp
                 )
                 Text(

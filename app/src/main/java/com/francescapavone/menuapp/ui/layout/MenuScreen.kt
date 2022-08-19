@@ -31,7 +31,7 @@ import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
 
 @Composable
-fun Menu(starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>/*restaurant: MutableState<Restaurant>*/, subtotal: MutableState<Double>, /*orderList: MutableList<Dish>*/ orderList: MutableList<Course>){
+fun Menu(/*restaurant: MutableState<Restaurant>,*/starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>, secondcourses: SnapshotStateList<Course>, sides: SnapshotStateList<Course>, fruits: SnapshotStateList<Course>, desserts: SnapshotStateList<Course>, drinks: SnapshotStateList<Course>, subtotal: MutableState<Double>, /*orderList: MutableList<Dish>*/ orderList: MutableList<Course>){
     val scaffoldState = rememberScaffoldState()
 
 /*
@@ -213,7 +213,7 @@ fun Menu(starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Co
                 contentPadding = PaddingValues(20.dp)
             ){
                 items(
-                    items = firstcourses,
+                    items = secondcourses,
                     itemContent = {
                         DishCard(course = it, subtotal = subtotal, orderList = orderList)
                     }
@@ -226,7 +226,7 @@ fun Menu(starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Co
                 contentPadding = PaddingValues(20.dp)
             ){
                 items(
-                    items = firstcourses,
+                    items = sides,
                     itemContent = {
                         DishCard(course = it, subtotal = subtotal, orderList = orderList)
                     }
@@ -239,7 +239,7 @@ fun Menu(starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Co
                 contentPadding = PaddingValues(20.dp)
             ){
                 items(
-                    items = firstcourses,
+                    items = fruits,
                     itemContent = {
                         DishCard(course = it, subtotal = subtotal, orderList = orderList)
                     }
@@ -252,7 +252,7 @@ fun Menu(starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Co
                 contentPadding = PaddingValues(20.dp)
             ){
                 items(
-                    items = firstcourses,
+                    items = desserts,
                     itemContent = {
                         DishCard(course = it, subtotal = subtotal, orderList = orderList)
                     }
@@ -265,7 +265,7 @@ fun Menu(starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Co
                 contentPadding = PaddingValues(20.dp)
             ){
                 items(
-                    items = firstcourses,
+                    items = drinks,
                     itemContent = {
                         DishCard(course = it, subtotal = subtotal, orderList = orderList)
                     }

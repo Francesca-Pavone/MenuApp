@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -44,7 +45,7 @@ fun QuantityCounter(modifier: Modifier = Modifier, count: Int, remove: () -> Uni
         ) {
             Text(
                 text = "$it",
-                color = Color.Black,
+                color = MaterialTheme.colors.onSurface,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.widthIn(min = 30.dp)

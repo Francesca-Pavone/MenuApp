@@ -40,7 +40,8 @@ import org.json.JSONException
 import org.json.JSONObject
 
 @Composable
-fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>, ) {
+fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>, secondcourses: SnapshotStateList<Course>, sides: SnapshotStateList<Course>, fruits: SnapshotStateList<Course>, desserts: SnapshotStateList<Course>, drinks: SnapshotStateList<Course>) {
+    val restaurantName = rememberSaveable { mutableStateOf("") }
     val total = rememberSaveable { mutableStateOf(0) }
     val context = LocalContext.current
     val s = RestaurantApi(context)
@@ -51,7 +52,7 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
             .padding(end = 20.dp)
             .width(180.dp),
         shape = RoundedCornerShape(14.dp),
-        backgroundColor = Color.White,
+        backgroundColor = MaterialTheme.colors.surface,
         elevation = 5.dp
     ) {
         Column(
@@ -83,7 +84,7 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
             ) {
                 Text(
                     text = restaurantPreview.name,
-                    color = Color.Black,
+                    color = MaterialTheme.colors.onSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -194,6 +195,116 @@ fun RestaurantCard(restaurantPreview: RestaurantPreview, starters: SnapshotState
                                 println(l)
                                 firstcourses.clear()
                                 firstcourses.addAll(l)
+                            } catch (e: JSONException) {
+                                Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        {
+                            Log.v("bo", "bo") //aggiungi commenti coerenti :(
+                        }
+                    )
+                    s.getMenu(
+                        restaurantPreview.id,
+                        {
+                            val jo = JSONObject(it)
+                            try {
+                                total.value = jo.getInt("totalsecondcourses")
+                                val ja = jo.getJSONArray("secondcourses")
+                                val sType = object : TypeToken<List<Course>>() {}.type
+
+                                val gson = Gson()
+                                val l = gson.fromJson<List<Course>>(ja.toString(), sType)
+                                println(l)
+                                secondcourses.clear()
+                                secondcourses.addAll(l)
+                            } catch (e: JSONException) {
+                                Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        {
+                            Log.v("bo", "bo") //aggiungi commenti coerenti :(
+                        }
+                    )
+                    s.getMenu(
+                        restaurantPreview.id,
+                        {
+                            val jo = JSONObject(it)
+                            try {
+                                total.value = jo.getInt("totalsides")
+                                val ja = jo.getJSONArray("sides")
+                                val sType = object : TypeToken<List<Course>>() {}.type
+
+                                val gson = Gson()
+                                val l = gson.fromJson<List<Course>>(ja.toString(), sType)
+                                println(l)
+                                sides.clear()
+                                sides.addAll(l)
+                            } catch (e: JSONException) {
+                                Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        {
+                            Log.v("bo", "bo") //aggiungi commenti coerenti :(
+                        }
+                    )
+                    s.getMenu(
+                        restaurantPreview.id,
+                        {
+                            val jo = JSONObject(it)
+                            try {
+                                total.value = jo.getInt("totalfruits")
+                                val ja = jo.getJSONArray("fruits")
+                                val sType = object : TypeToken<List<Course>>() {}.type
+
+                                val gson = Gson()
+                                val l = gson.fromJson<List<Course>>(ja.toString(), sType)
+                                println(l)
+                                fruits.clear()
+                                fruits.addAll(l)
+                            } catch (e: JSONException) {
+                                Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        {
+                            Log.v("bo", "bo") //aggiungi commenti coerenti :(
+                        }
+                    )
+                    s.getMenu(
+                        restaurantPreview.id,
+                        {
+                            val jo = JSONObject(it)
+                            try {
+                                total.value = jo.getInt("totaldesserts")
+                                val ja = jo.getJSONArray("desserts")
+                                val sType = object : TypeToken<List<Course>>() {}.type
+
+                                val gson = Gson()
+                                val l = gson.fromJson<List<Course>>(ja.toString(), sType)
+                                println(l)
+                                desserts.clear()
+                                desserts.addAll(l)
+                            } catch (e: JSONException) {
+                                Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        {
+                            Log.v("bo", "bo") //aggiungi commenti coerenti :(
+                        }
+                    )
+                    s.getMenu(
+                        restaurantPreview.id,
+                        {
+                            val jo = JSONObject(it)
+                            try {
+                                total.value = jo.getInt("totaldrinks")
+                                val ja = jo.getJSONArray("drinks")
+                                val sType = object : TypeToken<List<Course>>() {}.type
+
+                                val gson = Gson()
+                                val l = gson.fromJson<List<Course>>(ja.toString(), sType)
+                                println(l)
+                                drinks.clear()
+                                drinks.addAll(l)
                             } catch (e: JSONException) {
                                 Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
                             }
