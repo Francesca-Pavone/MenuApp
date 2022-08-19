@@ -40,13 +40,20 @@ import org.json.JSONException
 import org.json.JSONObject
 
 @Composable
-fun HomePage(list: SnapshotStateList<RestaurantPreview>, starters: SnapshotStateList<Course>, firstcourses: SnapshotStateList<Course>, secondcourses: SnapshotStateList<Course>, sides: SnapshotStateList<Course>, fruits: SnapshotStateList<Course>, desserts: SnapshotStateList<Course>, drinks: SnapshotStateList<Course>){
+fun HomePage(
+    list: SnapshotStateList<RestaurantPreview>,
+    starters: SnapshotStateList<Course>,
+    firstcourses: SnapshotStateList<Course>,
+    secondcourses: SnapshotStateList<Course>,
+    sides: SnapshotStateList<Course>,
+    fruits: SnapshotStateList<Course>,
+    desserts: SnapshotStateList<Course>,
+    drinks: SnapshotStateList<Course>
+){
     val restaurantName = rememberSaveable { mutableStateOf("") }
     val total = rememberSaveable { mutableStateOf(0) }
     val context = LocalContext.current
     val s = RestaurantApi(context)
-
-//    val restaurants = rememberSaveable { DataProvider.restaurantList }
 
     val conf = LocalConfiguration.current
 

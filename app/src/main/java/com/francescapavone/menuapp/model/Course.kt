@@ -8,7 +8,9 @@ data class Course(
     val name: String,
     var price: String,
     var poster: String,
-    var description: String
+    var description: String,
+    var restaurantId: String,
+    var count: Int = 0
 ): Parcelable {
-    constructor() : this("", "", "","")
+    constructor() : this("", "", "","", "")
 }
