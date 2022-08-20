@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +44,7 @@ fun Menu(
     fruits: SnapshotStateList<Course>,
     desserts: SnapshotStateList<Course>,
     drinks: SnapshotStateList<Course>,
-    subtotal: MutableState<Double>, /*orderList: MutableList<Dish>*/
+    subtotal: MutableState<Double>,
     orderList: MutableList<Course>
 ){
     val scaffoldState = rememberScaffoldState()
@@ -204,7 +205,7 @@ fun Menu(
                         contentColor = myGreen)
                 ) {
                     Text(
-                        text = "Add to favorite",
+                        text = stringResource(R.string.addFav),
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                         )
@@ -222,7 +223,7 @@ fun Menu(
                 }
             }
 
-            Title(title = "Starters")
+            Title(title = stringResource(R.string.starters))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(20.dp),
@@ -235,7 +236,7 @@ fun Menu(
                 )
             }
 
-            Title(title = "First courses")
+            Title(title = stringResource(R.string.first))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(20.dp)
@@ -248,7 +249,7 @@ fun Menu(
                 )
             }
 
-            Title(title = "Second courses")
+            Title(title = stringResource(R.string.second))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(20.dp)
@@ -261,7 +262,7 @@ fun Menu(
                 )
             }
 
-            Title(title = "Sides")
+            Title(title = stringResource(R.string.sides))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(20.dp)
@@ -274,7 +275,7 @@ fun Menu(
                 )
             }
 
-            Title(title = "Fruits")
+            Title(title = stringResource(R.string.fruits))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(20.dp)
@@ -287,7 +288,7 @@ fun Menu(
                 )
             }
 
-            Title(title = "Desserts")
+            Title(title = stringResource(R.string.Desserts))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(20.dp)
@@ -300,7 +301,7 @@ fun Menu(
                 )
             }
 
-            Title(title = "Drinks")
+            Title(title = stringResource(R.string.drinks))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(20.dp)
