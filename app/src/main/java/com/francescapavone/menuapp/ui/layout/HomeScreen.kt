@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,6 +58,8 @@ fun HomePage(
     val s = RestaurantApi(context)
 
     val conf = LocalConfiguration.current
+
+    val searching = rememberSaveable{ mutableStateOf(false) }
 
     val portrait = when (conf.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
@@ -110,9 +114,14 @@ fun HomePage(
         },
         floatingActionButtonPosition = if(portrait) FabPosition.End else FabPosition.Center,
         isFloatingActionButtonDocked = !portrait,
-        bottomBar = { if (!portrait) HomeBottomBar() },
+        bottomBar = { if (!portrait) HomeBottomBar(restaurantName, searching) },
         topBar = { if (portrait) HomeTopBar(restaurantName) },
     ) {paddingValues ->
+
+        val filteredList: List<RestaurantPreview> = list.filter { res ->
+            (res.name.uppercase().contains(restaurantName.value.uppercase()))
+        }
+
         if(portrait) {
             Box(
                 modifier = Modifier
@@ -125,7 +134,7 @@ fun HomePage(
                         .verticalScroll(rememberScrollState())
                 ) {
                     items(
-                        items = list,
+                        items = filteredList,
                         itemContent = {
                             RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks)
                         }
@@ -158,7 +167,7 @@ fun HomePage(
                     .verticalScroll(rememberScrollState())
             ) {
                 items(
-                    items = list,
+                    items = filteredList,
                     itemContent = {
                         RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks)
                     }
@@ -192,7 +201,7 @@ fun HomeTopBar(restaurant: MutableState<String>) {
             TextField(
                 value = restaurant.value,
                 onValueChange = {restaurant.value = it},
-                placeholder = { Text(text = "Search a restaurant", fontSize = 16.sp) },
+                placeholder = { Text(text = stringResource(R.string.search), fontSize = 16.sp) },
                 textStyle = TextStyle(lineHeight = 70.sp),
                 maxLines = 1,
                 //singleLine = true,
@@ -217,7 +226,8 @@ fun HomeTopBar(restaurant: MutableState<String>) {
 }
 
 @Composable
-fun HomeBottomBar(){
+fun HomeBottomBar(restaurant: MutableState<String>, searching: MutableState<Boolean>) {
+
     BottomAppBar(
         elevation = AppBarDefaults.BottomAppBarElevation,
         cutoutShape = CircleShape,
@@ -234,12 +244,43 @@ fun HomeBottomBar(){
             }
         }
         Spacer(Modifier.weight(1f, true))
-        IconButton(onClick = { /*TODO*/ }) {
-            Icon(
-                Icons.Rounded.Search,
-                contentDescription = null,
-                tint = myYellow
+        if (searching.value) {
+            TextField(
+                value = restaurant.value,
+                onValueChange = { restaurant.value = it },
+                modifier = Modifier.height(50.dp),
+                placeholder = { Text(text = stringResource(R.string.search)) },
+                textStyle = TextStyle(lineHeight = 70.sp),
+                maxLines = 1,
+                //singleLine = true,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Search,
+                        contentDescription = "Search"
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = "Close",
+                        modifier = Modifier.clickable { searching.value = false })
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colors.surface,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedLabelColor = myGreen,
+                    textColor = Color.Gray
+                )
             )
+        } else {
+            IconButton(onClick = { searching.value = !searching.value }) {
+                Icon(
+                    Icons.Rounded.Search,
+                    contentDescription = null,
+                    tint = myYellow
+                )
+            }
         }
     }
 }

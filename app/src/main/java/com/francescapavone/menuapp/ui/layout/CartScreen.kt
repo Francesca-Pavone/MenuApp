@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -48,7 +49,7 @@ fun Cart(subtotal: MutableState<Double>, orderList: MutableList</*Dish*/Course> 
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp),
-                text = "My cart",
+                text = stringResource(R.string.Cart),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 textDecoration = TextDecoration.Underline,
@@ -104,14 +105,14 @@ fun CartBottomBar(subtotal: MutableState<Double>){
             )
             .padding(20.dp)
     ) {
-        TextAndPrice(text = "Subtotal", price = subtotal.value, portrait)
-        TextAndPrice(text = "Delivery", price = 2.0, portrait)
+        TextAndPrice(text = stringResource(R.string.subTotal), price = subtotal.value, portrait)
+        TextAndPrice(text = stringResource(R.string.delivery), price = 2.0, portrait)
         Divider(
             modifier = Modifier.padding(vertical = if (portrait) 10.dp else 5.dp),
             color = MaterialTheme.colors.onSurface,
             thickness = 1.dp
         )
-        TextAndPrice(text = "Total", price = subtotal.value + 2, portrait)
+        TextAndPrice(text = stringResource(R.string.total), price = subtotal.value + 2, portrait)
         TextButton(
             modifier = Modifier
                 .padding(top = if (portrait) 20.dp else 0.dp)
@@ -124,7 +125,7 @@ fun CartBottomBar(subtotal: MutableState<Double>){
                 contentColor = Color.Black)
         ) {
             Text(
-                text = "Confirm",
+                text = stringResource(R.string.conf),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
