@@ -15,8 +15,6 @@ import com.francescapavone.menuapp.model.RestaurantPreview
 import com.francescapavone.menuapp.ui.layout.Cart
 import com.francescapavone.menuapp.ui.layout.HomePage
 import com.francescapavone.menuapp.ui.layout.Menu
-import com.francescapavone.menuapp.ui.data.Restaurant
-import com.francescapavone.menuapp.ui.layout.FavoritePage
 import com.francescapavone.menuapp.ui.theme.MenuAppTheme
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
 
@@ -47,7 +45,6 @@ class MainActivity : ComponentActivity() {
                     1 -> HomePage(previewslist, starters, firstcourses, secondcourses, sides, fruits, desserts, drinks)
                     2 -> Menu(restaurantId, starters, firstcourses, secondcourses, sides, fruits, desserts, drinks, subtotal, orderList)
                     3 -> Cart(subtotal, orderList)
-                    4 -> FavoritePage()
                 }
 
             }

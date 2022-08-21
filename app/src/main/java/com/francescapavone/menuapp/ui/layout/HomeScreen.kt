@@ -1,5 +1,6 @@
 package com.francescapavone.menuapp.ui.layout
 
+import android.app.Application
 import android.content.res.Configuration
 import android.util.Log
 import android.widget.Toast
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -32,10 +34,10 @@ import com.francescapavone.menuapp.api.RestaurantApi
 import com.francescapavone.menuapp.model.Course
 import com.francescapavone.menuapp.model.RestaurantPreview
 import com.francescapavone.menuapp.ui.components.RestaurantCard
-import com.francescapavone.menuapp.ui.data.DataProvider
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
+import com.francescapavone.menuapp.viewmodel.MainViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONException
@@ -54,12 +56,17 @@ fun HomePage(
 ){
     val restaurantName = rememberSaveable { mutableStateOf("") }
     val total = rememberSaveable { mutableStateOf(0) }
-    val context = LocalContext.current
+    val context = LocalContext.current.applicationContext
     val s = RestaurantApi(context)
 
     val conf = LocalConfiguration.current
 
     val searching = rememberSaveable{ mutableStateOf(false) }
+
+    val viewModel = MainViewModel(context as Application)
+    val allFav by viewModel.allfavourite.observeAsState(listOf())
+    val onFav = remember { mutableStateOf(false) } //clicked on fav list
+    val idList = mutableListOf<String>()
 
     val portrait = when (conf.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
@@ -114,12 +121,23 @@ fun HomePage(
         },
         floatingActionButtonPosition = if(portrait) FabPosition.End else FabPosition.Center,
         isFloatingActionButtonDocked = !portrait,
-        bottomBar = { if (!portrait) HomeBottomBar(restaurantName, searching) },
+        bottomBar = { if (!portrait) HomeBottomBar(restaurantName, searching, onFav) },
         topBar = { if (portrait) HomeTopBar(restaurantName) },
     ) {paddingValues ->
 
         val filteredList: List<RestaurantPreview> = list.filter { res ->
             (res.name.uppercase().contains(restaurantName.value.uppercase()))
+        }
+
+        if(restaurantName.value != "")
+            onFav.value = false
+
+        for (i in allFav) {
+            idList.add(i.id)
+        }
+
+        val favList: List<RestaurantPreview> = list.filter { res ->
+            (res.id in idList)
         }
 
         if(portrait) {
@@ -134,14 +152,16 @@ fun HomePage(
                         .verticalScroll(rememberScrollState())
                 ) {
                     items(
-                        items = filteredList,
+                        items = if (!onFav.value) filteredList else favList,
                         itemContent = {
                             RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks)
                         }
                     )
                 }
                 FloatingActionButton(
-                    onClick = { ScreenRouter.navigateTo(4) },
+                    onClick = {
+                        onFav.value = !onFav.value
+                    },
                     modifier = Modifier
                         .padding(start = 15.dp, bottom = 15.dp)
                         .size(64.dp)
@@ -153,7 +173,7 @@ fun HomePage(
                 ) {
                     Icon(
                         modifier = Modifier.padding(18.dp),
-                        painter = painterResource(id = R.drawable.add_favorite),
+                        painter = painterResource(id = if(!onFav.value) R.drawable.add_favorite else R.drawable.arrow_back),
                         contentDescription = "Localized description",
                     )
                 }
@@ -167,7 +187,7 @@ fun HomePage(
                     .verticalScroll(rememberScrollState())
             ) {
                 items(
-                    items = filteredList,
+                    items = if (!onFav.value) filteredList else favList,
                     itemContent = {
                         RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks)
                     }
@@ -204,8 +224,13 @@ fun HomeTopBar(restaurant: MutableState<String>) {
                 placeholder = { Text(text = stringResource(R.string.search), fontSize = 16.sp) },
                 textStyle = TextStyle(lineHeight = 70.sp),
                 maxLines = 1,
-                //singleLine = true,
-                leadingIcon = { Icon(imageVector = Icons.Rounded.Search, contentDescription = "Search") },
+                singleLine = true,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Search,
+                        contentDescription = "Search"
+                    )
+                },
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = MaterialTheme.colors.surface,
                     focusedIndicatorColor = Color.Transparent,
@@ -218,15 +243,18 @@ fun HomeTopBar(restaurant: MutableState<String>) {
                     .weight(1f)
                     .padding(end = 18.dp)
             )
-            IconButton(onClick = { }) {
-                Image(painter = painterResource(id = R.drawable.qr_code), contentDescription = "qrCodeScanner")
+            IconButton(onClick = { /*TODO*/ }) {
+                Image(
+                    painter = painterResource(id = R.drawable.qr_code),
+                    contentDescription = "qrCodeScanner"
+                )
             }
         }
     }
 }
 
 @Composable
-fun HomeBottomBar(restaurant: MutableState<String>, searching: MutableState<Boolean>) {
+fun HomeBottomBar(restaurant: MutableState<String>, searching: MutableState<Boolean>, onFav: MutableState<Boolean>) {
 
     BottomAppBar(
         elevation = AppBarDefaults.BottomAppBarElevation,
@@ -235,7 +263,11 @@ fun HomeBottomBar(restaurant: MutableState<String>, searching: MutableState<Bool
         contentPadding = AppBarDefaults.ContentPadding
     ) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-            IconButton(onClick = { ScreenRouter.navigateTo(4) }) {
+            IconButton(
+                onClick = {
+                    onFav.value = !onFav.value
+                }
+            ) {
                 Icon(
                     Icons.Rounded.Favorite,
                     contentDescription = null,
@@ -252,7 +284,7 @@ fun HomeBottomBar(restaurant: MutableState<String>, searching: MutableState<Bool
                 placeholder = { Text(text = stringResource(R.string.search)) },
                 textStyle = TextStyle(lineHeight = 70.sp),
                 maxLines = 1,
-                //singleLine = true,
+                singleLine = true,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Rounded.Search,
