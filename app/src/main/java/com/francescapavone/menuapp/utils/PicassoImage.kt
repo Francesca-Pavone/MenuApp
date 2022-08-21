@@ -1,4 +1,4 @@
-package com.francescapavone.menuapp.ui.utils
+package com.francescapavone.menuapp.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

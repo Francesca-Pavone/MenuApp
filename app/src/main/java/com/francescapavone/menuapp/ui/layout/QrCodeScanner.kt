@@ -2,15 +2,9 @@ package com.francescapavone.menuapp.ui.layout
 
 import android.Manifest
 import android.app.DownloadManager
-import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Bundle
-import android.os.Environment
-import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.core.content.ContextCompat
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -37,13 +31,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContextCompat
-import java.io.File
-import com.francescapavone.menuapp.ui.utils.QRCodeAnalyzer
+import androidx.compose.ui.res.stringResource
+import com.francescapavone.menuapp.R
+import com.francescapavone.menuapp.utils.DownloadHelper
+import com.francescapavone.menuapp.utils.QRCodeAnalyzer
 
 
 @Composable
-fun QrCodeScanner() {
+fun QrCodeScanner(
+    dm: DownloadManager
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraProviderFuture =
@@ -122,7 +119,7 @@ fun QrCodeScanner() {
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = "Please confirm",
+                                            text = stringResource(R.string.confim),
                                             style = TextStyle(
                                                 fontSize = 24.sp,
                                                 fontFamily = FontFamily.Default,
@@ -141,7 +138,6 @@ fun QrCodeScanner() {
                                     }
 
                                     Spacer(modifier = Modifier.height(20.dp))
-
                                     Spacer(modifier = Modifier.height(20.dp))
 
                                     Box(
@@ -154,7 +150,8 @@ fun QrCodeScanner() {
                                     ) {
                                         Button(
                                             onClick = {
-//                                                download(code, "menu", context)
+                                                val downloadHelper = DownloadHelper()
+                                                downloadHelper.download(code, "Menu", dm)
                                             },
                                             colors = ButtonDefaults.buttonColors(
                                                 backgroundColor = Color(0xFF2E7558)
@@ -192,7 +189,7 @@ fun QrCodeScanner() {
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = "QR not valid",
+                                            text = stringResource(R.string.QR),
                                             style = TextStyle(
                                                 fontSize = 24.sp,
                                                 fontFamily = FontFamily.Default,
@@ -211,9 +208,7 @@ fun QrCodeScanner() {
                                     }
 
                                     Spacer(modifier = Modifier.height(20.dp))
-
                                     Spacer(modifier = Modifier.height(20.dp))
-
                                 }
                             }
                         }
@@ -223,27 +218,3 @@ fun QrCodeScanner() {
         }
     }
 }
-/*private fun download(url: String, fileName: String, context: Context) {
-    val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-    val fileLink = Uri.parse(url)
-    val request = DownloadManager.Request(fileLink)
-
-    try {
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE or DownloadManager.Request.NETWORK_WIFI)
-            .setMimeType("application/pdf")
-            .setAllowedOverRoaming(false)
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setTitle("$fileName.pdf")
-            .setDestinationInExternalPublicDir(
-                Environment.DIRECTORY_DOWNLOADS,
-                File.separator + fileName + ".pdf")
-
-        dm.enqueue(request)
-        Toast.makeText(context, "PDF is Downloaded", Toast.LENGTH_LONG).show()
-
-    } catch (e: Exception) {
-        Toast.makeText(context, "Download Failed", Toast.LENGTH_LONG).show()
-    }
-}*/
-
-
