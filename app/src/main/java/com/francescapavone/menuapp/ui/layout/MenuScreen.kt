@@ -59,7 +59,7 @@ fun Menu(
 
     val isFav = remember { mutableStateOf(true) }
 
-    val message = rememberSaveable{ mutableStateOf(if(!isFav.value) "Add to favourites" else "Remove from favourites") }
+//    val message = rememberSaveable{ mutableStateOf(if(!isFav.value) "Add to favourites" else "Remove from favourites") }
 //    val favIcon = rememberSaveable { mutableStateOf(if(!restaurant.value.favourite) R.drawable.add_favorite else R.drawable.remove_favorite) }
 
     val openDialog = remember { mutableStateOf(false) }
@@ -210,11 +210,9 @@ fun Menu(
                         if(!isFav.value){ //se non è tra i preferiti
                             println("pressed for adding to fav id: ${starters[0].restaurantId}")
                             viewModel.updateFavoriteOn(restaurant)
-                            message.value = "Remove from favourites"
                         } else {
                             println("pressed for remove from fav id: ${starters[0].restaurantId}")
                             viewModel.updateFavoriteOff(restaurant)
-                            message.value = "Add to favourites"
                         }
                     },
                     modifier = Modifier
@@ -226,7 +224,7 @@ fun Menu(
                         contentColor = myGreen)
                 ) {
                     Text(
-                        text = message.value,
+                        text = if(!isFav.value) "Add to favorite" else "Remove",
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                         )
