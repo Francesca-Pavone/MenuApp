@@ -1,4 +1,4 @@
-package com.francescapavone.menuapp.ui.utils
+package com.francescapavone.menuapp.utils
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -36,7 +35,7 @@ import com.francescapavone.menuapp.model.RestaurantPreview
 import com.francescapavone.menuapp.ui.components.RestaurantCard
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
-import com.francescapavone.menuapp.ui.utils.ScreenRouter
+import com.francescapavone.menuapp.utils.ScreenRouter
 import com.francescapavone.menuapp.viewmodel.MainViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -119,9 +118,9 @@ fun HomePage(
                 Image(painter = painterResource(id = R.drawable.shop_bag2), contentDescription = "shoppingCart")
             }
         },
-        floatingActionButtonPosition = if(portrait) FabPosition.End else FabPosition.Center,
-        isFloatingActionButtonDocked = !portrait,
-        bottomBar = { if (!portrait) HomeBottomBar(restaurantName, searching, onFav) },
+        floatingActionButtonPosition = FabPosition.Center,
+        isFloatingActionButtonDocked = true,
+        bottomBar = { HomeBottomBar(restaurantName, searching, onFav, portrait) },
         topBar = { if (portrait) HomeTopBar(restaurantName) },
     ) {paddingValues ->
 
@@ -140,25 +139,37 @@ fun HomePage(
             (res.id in idList)
         }
 
-        if(portrait) {
-            Box(
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(paddingValues)
+        ) {
+            LazyRow(
+                contentPadding = PaddingValues(
+                    start = if (portrait) 110.dp else 210.dp,
+                    top = 80.dp
+                ),
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(paddingValues)
+                    .verticalScroll(rememberScrollState())
             ) {
-                LazyRow(
-                    contentPadding = PaddingValues(start = 110.dp, top = 80.dp),
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    items(
-                        items = if (!onFav.value) filteredList else favList,
-                        itemContent = {
-                            RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks, portrait)
-                        }
-                    )
-                }
-                FloatingActionButton(
+                items(
+                    items = if (!onFav.value) filteredList else favList,
+                    itemContent = {
+                        RestaurantCard(
+                            restaurantPreview = it,
+                            starters,
+                            firstcourses,
+                            secondcourses,
+                            sides,
+                            fruits,
+                            desserts,
+                            drinks,
+                            portrait
+                        )
+                    }
+                )
+            }
+            /*FloatingActionButton(
                     onClick = {
                         onFav.value = !onFav.value
                     },
@@ -177,22 +188,7 @@ fun HomePage(
                         contentDescription = null,
                     )
                 }
-
-            }
-        } else {
-            LazyRow(
-                contentPadding = PaddingValues(start = 110.dp, top = 10.dp),
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                items(
-                    items = if (!onFav.value) filteredList else favList,
-                    itemContent = {
-                        RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks, portrait)
-                    }
-                )
-            }
+*/
         }
     }
 }
@@ -241,20 +237,14 @@ fun HomeTopBar(restaurant: MutableState<String>) {
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 18.dp)
+                    .padding(horizontal = 10.dp)
             )
-            IconButton(onClick = { /*TODO*/ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.qr_code),
-                    contentDescription = "qrCodeScanner"
-                )
-            }
         }
     }
 }
 
 @Composable
-fun HomeBottomBar(restaurant: MutableState<String>, searching: MutableState<Boolean>, onFav: MutableState<Boolean>) {
+fun HomeBottomBar(restaurant: MutableState<String>, searching: MutableState<Boolean>, onFav: MutableState<Boolean>, portrait: Boolean) {
 
     BottomAppBar(
         elevation = AppBarDefaults.BottomAppBarElevation,
@@ -306,12 +296,24 @@ fun HomeBottomBar(restaurant: MutableState<String>, searching: MutableState<Bool
                 )
             )
         } else {
-            IconButton(onClick = { searching.value = !searching.value }) {
-                Icon(
-                    Icons.Rounded.Search,
-                    contentDescription = null,
-                    tint = myYellow
-                )
+            if (portrait) {
+                IconButton(onClick = { ScreenRouter.navigateTo(4) }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.qr_code_scanner),
+                        contentDescription = null,
+                        tint = myYellow,
+                        modifier = Modifier.padding(3.dp)
+                    )
+                }
+
+            } else {
+                IconButton(onClick = { searching.value = !searching.value }) {
+                    Icon(
+                        Icons.Rounded.Search,
+                        contentDescription = null,
+                        tint = myYellow
+                    )
+                }
             }
         }
     }

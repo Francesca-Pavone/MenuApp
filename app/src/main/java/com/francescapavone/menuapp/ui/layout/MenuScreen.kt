@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,10 +27,10 @@ import androidx.compose.ui.window.Dialog
 import com.francescapavone.menuapp.R
 import com.francescapavone.menuapp.db.RestaurantEntity
 import com.francescapavone.menuapp.model.Course
-import com.francescapavone.menuapp.ui.components.DishCard
+import com.francescapavone.menuapp.ui.components.CourseCard
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
-import com.francescapavone.menuapp.ui.utils.ScreenRouter
+import com.francescapavone.menuapp.utils.ScreenRouter
 import com.francescapavone.menuapp.viewmodel.MainViewModel
 import com.github.sumimakito.awesomeqr.AwesomeQrRenderer
 import com.github.sumimakito.awesomeqr.option.RenderOption
@@ -255,7 +254,7 @@ fun Menu(
                 items(
                     items = starters,
                     itemContent = {
-                        DishCard(course = it, subtotal =  subtotal, orderList = orderList, restaurantId = restaurantId)
+                        CourseCard(course = it, subtotal =  subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -268,7 +267,7 @@ fun Menu(
                 items(
                     items = firstcourses,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
+                        CourseCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -281,7 +280,7 @@ fun Menu(
                 items(
                     items = secondcourses,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
+                        CourseCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -294,7 +293,7 @@ fun Menu(
                 items(
                     items = sides,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
+                        CourseCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -307,7 +306,7 @@ fun Menu(
                 items(
                     items = fruits,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
+                        CourseCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -320,7 +319,7 @@ fun Menu(
                 items(
                     items = desserts,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
+                        CourseCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }
@@ -333,7 +332,7 @@ fun Menu(
                 items(
                     items = drinks,
                     itemContent = {
-                        DishCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
+                        CourseCard(course = it, subtotal = subtotal, orderList = orderList, restaurantId = restaurantId)
                     }
                 )
             }

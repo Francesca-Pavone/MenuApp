@@ -1,4 +1,4 @@
-package com.francescapavone.menuapp.ui.utils
+package com.francescapavone.menuapp.utils
 
 import android.graphics.ImageFormat
 import androidx.camera.core.ImageAnalysis

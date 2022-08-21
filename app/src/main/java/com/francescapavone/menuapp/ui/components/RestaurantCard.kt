@@ -2,7 +2,6 @@ package com.francescapavone.menuapp.ui.components
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -31,8 +30,8 @@ import com.francescapavone.menuapp.model.Course
 import com.francescapavone.menuapp.model.RestaurantPreview
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
-import com.francescapavone.menuapp.ui.utils.NetworkImageComponentPicasso
-import com.francescapavone.menuapp.ui.utils.ScreenRouter
+import com.francescapavone.menuapp.utils.NetworkImageComponentPicasso
+import com.francescapavone.menuapp.utils.ScreenRouter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONException

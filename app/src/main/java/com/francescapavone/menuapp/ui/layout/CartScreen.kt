@@ -29,7 +29,7 @@ import com.francescapavone.menuapp.R
 import com.francescapavone.menuapp.model.Course
 import com.francescapavone.menuapp.ui.components.OrderedDishCard
 import com.francescapavone.menuapp.ui.theme.myYellow
-import com.francescapavone.menuapp.ui.utils.ScreenRouter
+import com.francescapavone.menuapp.utils.ScreenRouter
 
 @Composable
 fun Cart(subtotal: MutableState<Double>, orderList: MutableList</*Dish*/Course> ){
@@ -79,7 +79,7 @@ fun Cart(subtotal: MutableState<Double>, orderList: MutableList</*Dish*/Course> 
     }
 
     BackHandler() {
-        ScreenRouter.navigateTo(2)
+        ScreenRouter.navigateTo(2) /*TODO*/
     }
 }
 

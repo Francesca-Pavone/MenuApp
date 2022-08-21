@@ -20,10 +20,10 @@ import androidx.compose.ui.unit.sp
 import com.francescapavone.menuapp.model.Course
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
-import com.francescapavone.menuapp.ui.utils.NetworkImageComponentPicasso
+import com.francescapavone.menuapp.utils.NetworkImageComponentPicasso
 
 @Composable
-fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*orderList: MutableList<Dish>*/orderList: MutableList<Course>, restaurantId: MutableState<Int> ) {
+fun CourseCard(course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*orderList: MutableList<Dish>*/orderList: MutableList<Course>, restaurantId: MutableState<Int> ) {
 
     println("here")
     val (count, updateCount) = rememberSaveable { mutableStateOf(course.count) }
@@ -33,7 +33,7 @@ fun DishCard( course: Course/*dish: Dish*/, subtotal: MutableState<Double>, /*or
     if (openDialogDescription.value) {
         AlertDialog(
             shape = RoundedCornerShape(14.dp),
-            modifier = Modifier.background(MaterialTheme.colors.surface),
+//            modifier = Modifier.background(MaterialTheme.colors.surface),
             onDismissRequest = {
                 openDialogDescription.value = false
             },

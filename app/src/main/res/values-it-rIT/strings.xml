@@ -17,4 +17,6 @@
 <string name="first">Primi piatti</string>
 <string name="infoLess">Nascondi info</string>
 <string name="infoPlus">Mostra info</string>
+    <string name="confim">Confirm</string>
+    <string name="QR">QR not valid</string>
 </resources>
