@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import com.francescapavone.menuapp.R
 import com.francescapavone.menuapp.model.Course
 import com.francescapavone.menuapp.ui.components.OrderedDishCard
-import com.francescapavone.menuapp.ui.data.Dish
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
 

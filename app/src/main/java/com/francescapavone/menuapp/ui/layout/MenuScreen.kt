@@ -1,5 +1,6 @@
 package com.francescapavone.menuapp.ui.layout
 
+import android.app.Application
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -8,16 +9,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,11 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.francescapavone.menuapp.R
+import com.francescapavone.menuapp.db.RestaurantEntity
 import com.francescapavone.menuapp.model.Course
 import com.francescapavone.menuapp.ui.components.DishCard
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.ScreenRouter
+import com.francescapavone.menuapp.viewmodel.MainViewModel
 import com.github.sumimakito.awesomeqr.AwesomeQrRenderer
 import com.github.sumimakito.awesomeqr.option.RenderOption
 
@@ -49,20 +52,25 @@ fun Menu(
 ){
     val scaffoldState = rememberScaffoldState()
 
-/*
-    val starters = rememberSaveable { DataProvider.starterList }
-    val firstCourses = rememberSaveable { DataProvider.firstCoursesList }
-    val secondCourses = rememberSaveable { DataProvider.secondCourseList }
-    val sides = rememberSaveable { DataProvider.sideList }
-    val fruits = rememberSaveable { DataProvider.fruitList }
-    val desserts = rememberSaveable { DataProvider.dessertList }
-    val drinks = rememberSaveable { DataProvider.drinkList }
-*/
+    val context = LocalContext.current.applicationContext
+    val viewModel = MainViewModel(context as Application)
+    val allFav by viewModel.allfavourite.observeAsState(listOf())
+    val idList = mutableListOf<String>()
 
-//    val message = rememberSaveable{ mutableStateOf(if(!restaurant.value.favourite) "Add to favourites" else "Remove from favourites") }
+    val isFav = remember { mutableStateOf(true) }
+
+    val message = rememberSaveable{ mutableStateOf(if(!isFav.value) "Add to favourites" else "Remove from favourites") }
 //    val favIcon = rememberSaveable { mutableStateOf(if(!restaurant.value.favourite) R.drawable.add_favorite else R.drawable.remove_favorite) }
 
     val openDialog = remember { mutableStateOf(false) }
+
+    for(i in allFav){
+        idList.add(i.id)
+    }
+
+    if(!starters.isEmpty()) {
+        isFav.value = starters[0].restaurantId in idList
+    }
 
     if (openDialog.value) {
         println(" Button pressed SHARE for id: " + starters[0].restaurantId)
@@ -195,7 +203,20 @@ fun Menu(
                 }
 
                 TextButton(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        val restaurant = RestaurantEntity()
+                        restaurant.id = starters[0].restaurantId
+
+                        if(!isFav.value){ //se non è tra i preferiti
+                            println("pressed for adding to fav id: ${starters[0].restaurantId}")
+                            viewModel.updateFavoriteOn(restaurant)
+                            message.value = "Remove from favourites"
+                        } else {
+                            println("pressed for remove from fav id: ${starters[0].restaurantId}")
+                            viewModel.updateFavoriteOff(restaurant)
+                            message.value = "Add to favourites"
+                        }
+                    },
                     modifier = Modifier
                         .height(50.dp),
                     shape = RoundedCornerShape(50),
@@ -205,7 +226,7 @@ fun Menu(
                         contentColor = myGreen)
                 ) {
                     Text(
-                        text = stringResource(R.string.addFav),
+                        text = message.value,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                         )
@@ -219,7 +240,12 @@ fun Menu(
                         .size(50.dp)
                         .background(color = myYellow, shape = RoundedCornerShape(50)))
                 {
-                    Icon(modifier = Modifier.padding(13.dp), painter = painterResource(id = R.drawable.download), tint = myGreen,  contentDescription = "add")
+                    Icon(
+                        modifier = Modifier.padding(13.dp),
+                        painter = painterResource(id = R.drawable.download),
+                        tint = myGreen,
+                        contentDescription = "add"
+                    )
                 }
             }
 

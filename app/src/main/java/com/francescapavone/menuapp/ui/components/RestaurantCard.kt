@@ -29,7 +29,6 @@ import com.francescapavone.menuapp.R
 import com.francescapavone.menuapp.api.RestaurantApi
 import com.francescapavone.menuapp.model.Course
 import com.francescapavone.menuapp.model.RestaurantPreview
-import com.francescapavone.menuapp.ui.data.Restaurant
 import com.francescapavone.menuapp.ui.theme.myGreen
 import com.francescapavone.menuapp.ui.theme.myYellow
 import com.francescapavone.menuapp.ui.utils.NetworkImageComponentPicasso
