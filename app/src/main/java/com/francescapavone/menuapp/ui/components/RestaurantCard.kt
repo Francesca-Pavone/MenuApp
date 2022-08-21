@@ -47,7 +47,8 @@ fun RestaurantCard(
     sides: SnapshotStateList<Course>,
     fruits: SnapshotStateList<Course>,
     desserts: SnapshotStateList<Course>,
-    drinks: SnapshotStateList<Course>
+    drinks: SnapshotStateList<Course>,
+    portrait: Boolean
 ) {
     val total = rememberSaveable { mutableStateOf(0) }
     val context = LocalContext.current
@@ -88,7 +89,7 @@ fun RestaurantCard(
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
-                if(!moreInfo.value) {
+                if(!moreInfo.value && !portrait) {
                     Text(
                         text = "More info",
                         textDecoration = TextDecoration.Underline,
@@ -101,7 +102,8 @@ fun RestaurantCard(
                 }else{
                     Divider(
                         color = Color.Gray,
-                        thickness = 1.dp
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(vertical = 3.dp)
                     )
                     Text(
                         text = restaurantPreview.price,
@@ -110,7 +112,8 @@ fun RestaurantCard(
                     )
                     Divider(
                         color = Color.Gray,
-                        thickness = 1.dp
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(vertical = 3.dp)
                     )
                     Text(
                         text = restaurantPreview.address,
@@ -119,7 +122,8 @@ fun RestaurantCard(
                     )
                     Divider(
                         color = Color.Gray,
-                        thickness = 1.dp
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(vertical = 3.dp)
                     )
                     Text(
                         text = restaurantPreview.city,
@@ -128,13 +132,15 @@ fun RestaurantCard(
                     )
                     Divider(
                         color = Color.Gray,
-                        thickness = 1.dp
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(vertical = 3.dp)
                     )
                     Text(
                         text = restaurantPreview.phone,
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
+                    if (!portrait)
                     Text(
                         text = "Less info",
                         textDecoration = TextDecoration.Underline,

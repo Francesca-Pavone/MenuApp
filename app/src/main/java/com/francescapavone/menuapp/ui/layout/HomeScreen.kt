@@ -147,14 +147,14 @@ fun HomePage(
                     .padding(paddingValues)
             ) {
                 LazyRow(
-                    contentPadding = PaddingValues(start = 110.dp, top = 100.dp),
+                    contentPadding = PaddingValues(start = 110.dp, top = 80.dp),
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
                 ) {
                     items(
                         items = if (!onFav.value) filteredList else favList,
                         itemContent = {
-                            RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks)
+                            RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks, portrait)
                         }
                     )
                 }
@@ -174,7 +174,7 @@ fun HomePage(
                     Icon(
                         modifier = Modifier.padding(18.dp),
                         painter = painterResource(id = if(!onFav.value) R.drawable.add_favorite else R.drawable.arrow_back),
-                        contentDescription = "Localized description",
+                        contentDescription = null,
                     )
                 }
 
@@ -189,7 +189,7 @@ fun HomePage(
                 items(
                     items = if (!onFav.value) filteredList else favList,
                     itemContent = {
-                        RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks)
+                        RestaurantCard(restaurantPreview = it,starters,firstcourses,secondcourses, sides, fruits, desserts, drinks, portrait)
                     }
                 )
             }
@@ -269,7 +269,7 @@ fun HomeBottomBar(restaurant: MutableState<String>, searching: MutableState<Bool
                 }
             ) {
                 Icon(
-                    Icons.Rounded.Favorite,
+                    painter = painterResource(id = if(!onFav.value) R.drawable.ic_baseline_favorite_24 else R.drawable.arrow_back),
                     contentDescription = null,
                     tint = myYellow
                 )
